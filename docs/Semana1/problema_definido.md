@@ -62,3 +62,61 @@ Ademas tambien impacta en pérdidas económicas por penalizaciones regulatorias 
 El problema técnico fundamental consiste en la alta vulnerabilidad ciberfísica que presentan las plantas fotovoltaicas conectadas a la red ante ataques dirigidos a la integridad de datos (como FDIA, Covert Attacks y Replay Attacks), debido a la total ausencia de mecanismos nativos de cifrado y autenticación en los protocolos Modbus TCP y MQTT que gobiernan su infraestructura SCADA e IIoT. Esta vulnerabilidad se ve críticamente agravada por un vacío metodológico e industrial: las normativas de seguridad eléctrica prohíben la experimentación y simulación de vectores de ataque directamente en entornos de producción reales para salvaguardar la continuidad del servicio, lo que impide a los ingenieros capturar firmas de tráfico anómalo y entrenar algoritmos de detección adaptativos basados en aprendizaje automático para redes de Tecnología de la Operación (OT).
 
 Consecuentemente, la persistencia de este problema técnico induce a una ceguera operativa severa en los sistemas de supervisión, donde la manipulación encubierta de variables críticas de potencia y control es indetectable para los sistemas de seguridad de TI tradicionales. De no implementarse una solución que permita emular de forma segura y realista el comportamiento ciberfísico de la planta frente a estas intrusiones, la infraestructura crítica permanece expuesta a sabotajes remotos capaces de provocar fallas térmicas destructivas en inversores centrales y transformadores elevadores, penalizaciones financieras severas por el incumplimiento de códigos de red debido a subgeneración, e inestabilidad de frecuencia y voltaje en el Punto de Conexión Común (PCC), comprometiendo directamente la seguridad y confiabilidad del sistema interconectado nacional.
+
+## 2. Definición del sistema.
+
+#### Honeypot (qué captura).
+
+Con el propósito de capturar y analizar actividad maliciosa dirigida específicamente a sistemas de generación solar fotovoltaica, se propone la implementación de un sistema honeypot de media interacción sobre una tarjeta de desarrollo Raspberry Pi 4. Dicho sistema tendrá como función principal emular los servicios de comunicación típicos de una planta fotovoltaica real, de manera que cualquier agente externo que acceda a la red del laboratorio perciba un entorno operativo legítimo. Para ello, se contempla la exposición deliberada de cuatro servicios señuelo: un servidor SSH, un servidor HTTP, un servidor Modbus TCP y un broker MQTT, configurados con parámetros que imiten el comportamiento de equipos industriales propios de este tipo de infraestructura. Cada interacción que se produzca con alguno de estos servicios será registrada en forma de evento estructurado, el cual incluirá información como la dirección IP de origen, el puerto de destino, la marca temporal de la conexión, las credenciales de autenticación empleadas, los comandos ejecutados durante la sesión, los registros Modbus accedidos, los tópicos MQTT manipulados y el tamaño de los datos transmitidos, entre otros atributos relevantes. Estos registros serán almacenados en una base de datos relacional, constituyendo el insumo principal para las etapas posteriores de análisis y clasificación. La selección de los protocolos Modbus TCP y MQTT como superficies de captura se fundamenta en su amplia adopción dentro de los sistemas de monitoreo y control de plantas fotovoltaicas a nivel industrial, lo cual le confiere al sistema propuesto una pertinencia técnica directa con el dominio de aplicación del proyecto.
+
+#### Simulación (qué genera).
+
+A fin de que el entorno honeypot resulte técnicamente creíble y funcione como un atractivo eficaz para potenciales atacantes, se propone el desarrollo de un módulo de simulación de una planta fotovoltaica que genere telemetría continua con valores físicamente coherentes. La simulación tomará como referencia el modelo eléctrico de un inversor solar de 5 kW con múltiples cadenas de paneles, cuyo comportamiento será calculado a partir del modelo de un diodo del panel fotovoltaico, ampliamente empleado en la literatura de sistemas de energía renovable. Entre las variables que se prevé generar se encuentran el voltaje y la corriente en la entrada del inversor, la potencia instantánea producida, la temperatura de operación de los paneles, la irradiancia solar incidente, el estado operativo del inversor y la energía acumulada expresada en kilovatios-hora. Con el objetivo de que los valores simulados sean representativos de las condiciones reales de operación en la región, se contempla el uso de datos históricos de irradiancia solar correspondientes a la ciudad de Santa Marta, Colombia, disponibles a través de fuentes públicas como la API NASA POWER. La telemetría generada será publicada periódicamente mediante el protocolo MQTT y expuesta a través de un servidor Modbus TCP con registros mapeados conforme a especificaciones de equipos de referencia del sector, de modo que el sistema completo simule el comportamiento de una instalación fotovoltaica en operación activa.
+
+#### Machine Learning (qué detecta).
+
+Para el procesamiento y clasificación automática de los eventos registrados por el honeypot, se propone el desarrollo de un módulo de detección de intrusiones basado en técnicas de aprendizaje automático supervisado. Este módulo tendrá como objetivo determinar, a partir de los atributos extraídos de cada sesión capturada, a cuál de cinco categorías predefinidas pertenece el evento analizado: tráfico normal, escaneo de puertos, ataque de fuerza bruta sobre el servicio SSH, acceso no autorizado al servidor Modbus TCP, o ataque de denegación de servicio mediante inundación de conexiones TCP. Estas categorías fueron seleccionadas por representar los vectores de ataque más documentados en estudios recientes sobre ciberseguridad de sistemas de control industrial. Se contempla el uso del algoritmo Random Forest como clasificador principal, dado su reconocido desempeño en tareas de detección de intrusiones con datos tabulares, así como su interpretabilidad, que facilitará la discusión de resultados en el documento final. El vector de características de entrada al modelo estará compuesto por atributos derivados directamente de los logs del honeypot, tales como la duración de la sesión, el número de intentos de autenticación, el protocolo utilizado, la tasa de paquetes transmitidos y el número de registros Modbus accedidos, entre otros. El conjunto de datos de entrenamiento se construirá a partir de los eventos recolectados durante la fase de operación del honeypot, y se evaluará la pertinencia de complementarlo con datasets públicos de referencia en el área, como UNSW-NB15, para garantizar la representatividad de todas las clases definidas. El desempeño del modelo será evaluado mediante métricas estándar de clasificación, y los resultados serán presentados a través de un panel de visualización que permitirá monitorear las alertas generadas en tiempo casi real.
+
+```mermaid
+graph TB
+    subgraph "1. Vector de ataque"
+        G[vector de ataque]
+    end
+    
+    subgraph "2. Infraestructura señuelo"
+        H[infraestructura señuelo <br/> y datos]
+        I[simulación solar]
+    end
+    
+    subgraph "3. Atacante"
+        A[Atacante simulado/real]
+    end
+    
+    subgraph "4. Simulación"
+        F[Simulación FV<br/>inversor 5 kW · NASA POWER]
+    end
+    
+    subgraph "5. Honeypot"
+        B[Honeypot<br/>Raspberry Pi 4<br/>SSH · Modbus · MQTT<br/>HTTP · Docker]
+    end
+    
+    subgraph "6. Procesamiento"
+        C[Logs<br/>JSON · PostgreSQL]
+        D[Entrena<br/>Modelo ML<br/>Random Forest]
+    end
+    
+    subgraph "7. Salida"
+        E[Dashboard<br/>alertas + telemetría<br/>Grafana]
+        J[análisis y salida]
+    end
+    
+    G --> A
+    H --> B
+    I --> F
+    A -->|ataca| B
+    F --> B
+    B -->|registra| C
+    C -->|extrae<br/>10 features · 5 clases| D
+    D -->|clasifica| E
+    E --> J
+```
