@@ -83,7 +83,14 @@ Para el procesamiento y clasificación automática de los eventos registrados po
 %%{init: {
   'theme': 'base',
   'themeVariables': {
-    'fontSize': '15px'
+    'fontSize': '15px',
+    'primaryColor': '#ffffff',
+    'edgeLabelBackground': '#ffffff',
+    'lineColor': '#4a4a4a',
+    'mainBkg': '#ffffff',
+    'nodeBorder': '#4a4a4a',
+    'actorBorder': '#4a4a4a',
+    'textColor': '#1a1a1a'
   },
   'flowchart': {
     'useMaxWidth': true,
@@ -99,7 +106,7 @@ graph TD
     C -->|10 Features| D[Random Forest<br>5 clases]
     D -->|Clasifica| E[Dashboard Grafana]
     
-    style B fill:#f9f,stroke:#333,stroke-width:2px
-    style D fill:#bbf,stroke:#333,stroke-width:2px
-    style E fill:#bfb,stroke:#333,stroke-width:2px
+    style B fill:#ffd966,stroke:#4a4a4a,stroke-width:2px
+    style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
+    style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
 ```
