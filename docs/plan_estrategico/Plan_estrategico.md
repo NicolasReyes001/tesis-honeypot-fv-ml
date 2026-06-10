@@ -1,163 +1,409 @@
-# 📅 Plan de 2 Meses (60 días)  
-**Proyecto: Honeypot para Sistemas Fotovoltaicos con Machine Learning**
-
-Tiempo estimado: **3–4 horas diarias**
+# PROYECTO COMO MATERIA UNIVERSITARIA (60 DÍAS)
+## Honeypot para Sistemas Fotovoltaicos con Machine Learning
 
 ---
 
-# 🧭 Semana 1 (Días 1–7)
-## 🎯 Objetivo: Definir completamente el proyecto
+# RÚBRICA GENERAL (TODAS LAS SEMANAS)
 
-### 📌 Actividades
-- **Día 1:** Revisar objetivos y delimitar alcance  
-- **Día 2:** Definir preguntas de investigación  
-- **Día 3:** Elaborar cronograma general  
-- **Día 4:** Diseñar arquitectura definitiva del sistema  
-- **Día 5:** Revisar protocolos (Modbus, MQTT)  
-- **Día 6:** Investigar Cowrie  
-- **Día 7:** Consolidar documento técnico inicial  
+Cada domingo (0–100 puntos):
 
-### ✅ Resultado
-✔ Proyecto totalmente definido
+- Cumplimiento de objetivos → 25%
+- Calidad técnica → 25%
+- Documentación → 15%
+- Funcionamiento práctico → 20%
+- Orden del repositorio → 10%
+- Claridad de resultados → 5%
 
 ---
 
-# 📚 Semana 2 (Días 8–14)
-## 🎯 Objetivo: Estado del arte
+# SEMANA 1 — DEFINICIÓN DEL SISTEMA
 
-### 📌 Actividades
-- **Días 8–9:** Honeypots industriales  
-- **Días 10–11:** Seguridad en plantas fotovoltaicas  
-- **Día 12:** IDS basados en Machine Learning  
-- **Día 13:** Random Forest en ciberseguridad  
-- **Día 14:** Organización de referencias en Zotero  
-
-### ✅ Resultado
-✔ 20–30 artículos científicos clasificados
+## Objetivo
+Definir completamente el problema, arquitectura y alcance del sistema.
 
 ---
 
-# ⚙️ Semana 3 (Días 15–21)
-## 🎯 Objetivo: Preparar entorno de trabajo
+## LUNES — Definición del problema real
 
-### 📌 Actividades
-- **Día 15:** Instalación de Docker  
-- **Día 16:** Configuración de Docker Compose  
-- **Día 17:** Instalación de Mosquitto (MQTT Broker)  
-- **Día 18:** Instalación de Node-RED  
-- **Día 19:** Configuración de Cowrie Honeypot  
-- **Día 20:** Instalación de tcpdump  
-- **Día 21:** Documentar instalación del entorno  
+### Actividades
+- Identificar problema en sistemas FV SCADA
+- Definir amenazas: FDIA, MITM, replay attacks
+- Contextualizar en energía solar real
 
-### ✅ Resultado
-✔ Infraestructura lista y documentada
+### Entregable
+`docs/semana1/problema_definido.md`
 
----
-
-# ☀️ Semana 4 (Días 22–28)
-## 🎯 Objetivo: Simulación de planta fotovoltaica
-
-### 📌 Actividades
-- **Día 22:** Aprender `pymodbus`  
-- **Día 23:** Diseñar registros Modbus  
-- **Día 24:** Simular voltaje  
-- **Día 25:** Simular corriente  
-- **Día 26:** Simular potencia  
-- **Día 27:** Publicar datos vía MQTT  
-- **Día 28:** Integrar Node-RED  
-
-### ✅ Resultado
-✔ Planta fotovoltaica simulada y funcional
+### Revisión diaria
+- ¿El problema es real o genérico?
+- ¿Tiene contexto industrial?
 
 ---
 
-# 🛡️ Semana 5 (Días 29–35)
-## 🎯 Objetivo: Honeypot operativo
+## MARTES — Preguntas de investigación
 
-### 📌 Actividades
-- **Día 29:** Configurar Cowrie completamente  
-- **Día 30:** Pruebas de acceso SSH  
-- **Día 31:** Exposición de Modbus simulado  
-- **Día 32:** Registro de ataques  
-- **Día 33:** Almacenamiento de logs  
-- **Día 34:** Integración con SQLite/PostgreSQL  
-- **Día 35:** Documentación de pruebas  
+### Actividades
+- Formular 3–5 preguntas de investigación
+- Definir hipótesis del sistema
+- Relacionar con ciberseguridad industrial
 
-### ✅ Resultado
-✔ Honeypot desplegado y operativo
+### Entregable
+`preguntas_investigacion.md`
 
----
-
-# 📊 Semana 6 (Días 36–42)
-## 🎯 Objetivo: Generación de dataset
-
-### 📌 Actividades
-- **Día 36:** Ataques SSH controlados  
-- **Día 37:** Escaneo con Nmap  
-- **Día 38:** Ataques Modbus básicos  
-- **Día 39:** Consolidación de logs  
-- **Día 40:** Etiquetado de eventos  
-- **Día 41:** Revisión de calidad del dataset  
-- **Día 42:** Dataset preliminar  
-
-### ✅ Resultado
-✔ Primer dataset propio de ciberseguridad industrial
+### Revisión
+- ¿Las preguntas son medibles?
+- ¿Son investigables en 60 días?
 
 ---
 
-# 🤖 Semana 7 (Días 43–49)
-## 🎯 Objetivo: Machine Learning (IDS)
+## MIÉRCOLES — Alcance del sistema
 
-### 📌 Actividades
-- **Día 43:** Carga de datos  
-- **Día 44:** Preprocesamiento  
-- **Día 45:** Ingeniería de características  
-- **Día 46:** Entrenamiento Random Forest  
-- **Día 47:** Evaluación de accuracy  
-- **Día 48:** Métricas (Precision, Recall, F1-score)  
-- **Día 49:** Interpretación de variables importantes  
+### Actividades
+- Definir qué SÍ y qué NO hará el sistema
+- Delimitar honeypot (SSH + Modbus + MQTT)
+- Definir límites del ML
 
-### ✅ Resultado
-✔ IDS basado en Machine Learning funcional
+### Entregable
+`alcance_sistema.md`
 
----
-
-# 📈 Semana 8 (Días 50–56)
-## 🎯 Objetivo: Visualización y dashboard
-
-### 📌 Actividades
-- **Día 50:** Implementación de Grafana o Streamlit  
-- **Día 51:** Visualización de ataques  
-- **Día 52:** Visualización de predicciones ML  
-- **Día 53:** Integración del modelo ML  
-- **Día 54:** Pruebas del sistema completo  
-- **Día 55:** Corrección de errores  
-- **Día 56:** Capturas para tesis  
-
-### ✅ Resultado
-✔ Sistema completo con demostración visual
+### Revisión
+- ¿Está sobredimensionado?
+- ¿Es realizable?
 
 ---
 
-# 🎓 Días 57–60
-## 🎯 Objetivo: Preparación para Proyecto de Grado
+## JUEVES — Arquitectura del sistema
 
-### 📌 Actividades
-- **Día 57:** Redacción de introducción  
-- **Día 58:** Redacción de metodología  
-- **Día 59:** Redacción del cronograma final  
-- **Día 60:** Preparación de presentación  
+### Actividades
+- Diseñar flujo completo:
+  - Planta FV simulada
+  - MQTT
+  - Modbus
+  - Honeypot
+  - ML IDS
+- Crear diagrama
 
-### 🏁 Resultado final
-Antes de iniciar la asignatura tendrás:
+### Entregable
+- `arquitectura.png`
+- `arquitectura.md`
 
-- ✔ 80% del anteproyecto redactado  
-- ✔ Estado del arte completo y organizado  
-- ✔ Arquitectura del sistema definida  
-- ✔ Simulación fotovoltaica funcional  
-- ✔ Honeypot operativo  
-- ✔ Logs reales capturados  
-- ✔ Dataset inicial propio  
-- ✔ Modelo Random Forest entrenado  
-- ✔ Dashboard funcional  
-- ✔ Presentación preliminar lista  
+### Revisión
+- ¿Flujo lógico?
+- ¿Hay puntos de captura de ataques?
+
+---
+
+## VIERNES — Protocolos industriales
+
+### Actividades
+- Estudiar Modbus TCP
+- Estudiar MQTT
+- Identificar vulnerabilidades
+
+### Entregable
+`protocolos_industriales.md`
+
+### Revisión
+- ¿Se entiende cómo fluye la data?
+
+---
+
+## SÁBADO — Cowrie y honeypots
+
+### Actividades
+- Analizar Cowrie
+- Casos reales de ataques SSH
+- Tipos de logs generados
+
+### Entregable
+`cowrie_estudio.md`
+
+### Revisión
+- ¿Entiendes qué vas a capturar?
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 1
+
+### Evaluación
+- Claridad del problema
+- Coherencia del sistema
+- Arquitectura
+- Viabilidad
+
+### Resultado
+- Nota /100
+- Correcciones obligatorias
+- Ajustes de arquitectura
+
+---
+
+# SEMANA 2 — ESTADO DEL ARTE
+
+## Objetivo
+Construir base científica sólida (papers reales).
+
+---
+
+## LUNES — Honeypots industriales
+- Lectura de 3–5 papers
+- Resumen técnico
+
+### Entregable
+`papers_honeypots.md`
+
+---
+
+## MARTES — SCADA y energía FV
+- Ataques reales a plantas solares
+- Fallos industriales
+
+### Entregable
+`scada_fv.md`
+
+---
+
+## MIÉRCOLES — Ataques industriales
+- MITM
+- FDIA
+- Replay attacks
+
+### Entregable
+`ataques_industriales.md`
+
+---
+
+## JUEVES — Machine Learning en IDS
+- Random Forest
+- SVM
+- Detección de anomalías
+
+### Entregable
+`ml_ids.md`
+
+---
+
+## VIERNES — Comparación de modelos
+- Ventajas y desventajas
+- Métricas de evaluación
+
+### Entregable
+`comparacion_ml.md`
+
+---
+
+## SÁBADO — Organización bibliográfica
+- Zotero / BibTeX
+- Matriz de papers
+
+### Entregable
+`bibliografia.bib`
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 2
+
+### Evaluación
+- Calidad de fuentes
+- Síntesis
+- Coherencia científica
+
+---
+
+# SEMANA 3 — INFRAESTRUCTURA
+
+## Objetivo
+Entorno funcional del sistema.
+
+---
+
+## LUNES — Docker base
+`docker_test.md`
+
+## MARTES — MQTT broker
+`mqtt_setup.md`
+
+## MIÉRCOLES — Node-RED
+`nodered_flow.json`
+
+## JUEVES — Cowrie setup
+`cowrie_config.md`
+
+## VIERNES — Logging system
+`logging_system.md`
+
+## SÁBADO — Integración inicial
+`integration_test.md`
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 3
+- Entorno estable
+- Errores técnicos
+- Integración parcial
+
+---
+
+# SEMANA 4 — SIMULACIÓN FV
+
+## Objetivo
+Planta fotovoltaica simulada funcional.
+
+---
+
+## LUNES — pymodbus
+`modbus_intro.md`
+
+## MARTES — variables FV
+`fv_variables.md`
+
+## MIÉRCOLES — simulación base
+`simulacion_base.py`
+
+## JUEVES — MQTT integración
+`mqtt_fv.py`
+
+## VIERNES — dashboard Node-RED
+`dashboard_flow.json`
+
+## SÁBADO — pruebas sistema
+`test_fv_system.md`
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 4
+- Realismo de simulación
+- Estabilidad de datos
+
+---
+
+# SEMANA 5 — HONEYPOT
+
+## Objetivo
+Sistema de captura de ataques funcional.
+
+---
+
+## LUNES — despliegue Cowrie
+`cowrie_deploy.md`
+
+## MARTES — ataques SSH
+`logs_ssh`
+
+## MIÉRCOLES — Modbus expuesto
+`modbus_honeypot.md`
+
+## JUEVES — logging centralizado
+`logs_db.py`
+
+## VIERNES — base de datos
+SQLite / PostgreSQL
+
+## SÁBADO — pruebas ataques
+Dataset inicial
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 5
+- Honeypot funcional
+- Calidad de logs
+
+---
+
+# SEMANA 6 — DATASET
+
+## Objetivo
+Dataset propio de ataques.
+
+---
+
+- Ataques SSH
+- Nmap scanning
+- Modbus fuzzing
+- Etiquetado
+- Limpieza de datos
+
+### Entregable
+Dataset final
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 6
+- Calidad del dataset
+- Etiquetado correcto
+
+---
+
+# SEMANA 7 — MACHINE LEARNING
+
+## Objetivo
+IDS funcional.
+
+---
+
+- Preprocessing
+- Feature engineering
+- Random Forest
+- Métricas
+- Interpretación
+
+### Entregable
+`modelo.pkl` + notebook
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 7
+- Accuracy
+- Overfitting
+- Interpretabilidad
+
+---
+
+# SEMANA 8 — INTEGRACIÓN FINAL
+
+## Objetivo
+Sistema completo end-to-end.
+
+---
+
+- Dashboard
+- Integración ML + logs
+- Pruebas finales
+
+### Entregable
+Sistema completo
+
+---
+
+## DOMINGO — EVALUACIÓN SEMANA 8
+- Sistema end-to-end
+- Estabilidad
+- Demo funcional
+
+---
+
+# SEMANA 9 — FINAL
+
+## Objetivo
+Tesis + defensa.
+
+---
+
+- Redacción final
+- Metodología
+- Resultados
+- Presentación
+
+### Entregable
+- Tesis
+- Slides
+
+---
+
+## DOMINGO FINAL
+
+- Simulación de defensa real
+- Nota final global
+- Recomendaciones
+
+---
+
