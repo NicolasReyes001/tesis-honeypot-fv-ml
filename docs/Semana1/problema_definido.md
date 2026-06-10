@@ -90,7 +90,8 @@ Para el procesamiento y clasificación automática de los eventos registrados po
     'mainBkg': '#ffffff',
     'nodeBorder': '#4a4a4a',
     'actorBorder': '#4a4a4a',
-    'textColor': '#1a1a1a'
+    'textColor': '#1a1a1a',
+    'arrowheadColor': '#4a4a4a'
   },
   'flowchart': {
     'useMaxWidth': true,
@@ -109,4 +110,7 @@ graph TD
     style B fill:#ffd966,stroke:#4a4a4a,stroke-width:2px
     style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
     style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
+
+    %% Estilo para flechas: negro con contorno blanco fino + punta visible
+    linkStyle default stroke:#1a1a1a,stroke-width:3px,color:#1a1a1a
 ```
