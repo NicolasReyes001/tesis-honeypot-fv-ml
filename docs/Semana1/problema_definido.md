@@ -111,9 +111,7 @@ graph TD
     style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
     style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
 
-    %% Contorno blanco grueso primero
+    %% === Flechas con contorno blanco + relleno negro ===
     linkStyle default stroke:#ffffff, stroke-width: 5px
-    
-    %% Relleno negro más fino encima (para que se vea el centro negro)
-    linkStyle default stroke:#1a1a1a, stroke-width:3px, color:#1a1a1a
+    linkStyle default stroke:#1a1a1a, stroke-width:2px, color:#1a1a1a
 ```
