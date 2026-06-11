@@ -6,11 +6,14 @@
         "ciberfísica",
         "ciberfísico",
         "ciberseguridad",
+        "correlacionar",
         "desbalances",
         "desconexiones",
         "exfiltración",
         "Exfiltración",
+        "exfiltraciones",
         "FDIA",
+        "hiperparámetros",
         "IGBT",
         "indetectable",
         "interpretabilidad",
@@ -24,6 +27,7 @@
         "seleccionamiento",
         "sobrefrecuencias",
         "subgeneración",
+        "tcpdump",
         "telemetría"
     ]
 }
