@@ -86,19 +86,20 @@ Para el procesamiento y clasificación automática de los eventos registrados po
     'fontSize': '15px',
     'primaryColor': '#ffffff',
     'edgeLabelBackground': '#ffffff',
-    'lineColor': '#4a4a4a',
+    'lineColor': '#000000',
     'mainBkg': '#ffffff',
     'nodeBorder': '#4a4a4a',
     'actorBorder': '#4a4a4a',
     'textColor': '#1a1a1a',
-    'arrowheadColor': '#1a1a1a'
+    'arrowheadColor': '#000000'
   },
   'flowchart': {
     'useMaxWidth': true,
     'nodeSpacing': 45,
     'rankSpacing': 55,
     'curve': 'basis'
-  }
+  },
+  'themeCSS': '.edgePath .path { stroke: #000000 !important; stroke-width: 3.5px !important; filter: drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff); } .edgePath .arrowheadPath { fill: #000000 !important; stroke: none !important; filter: drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff); }'
 }}%%
 graph TD
     A[Atacante simulado/real] -->|FDIA, Covert, Replay| B(Honeypot<br>Raspberry Pi 4 / Docker)
@@ -110,8 +111,4 @@ graph TD
     style B fill:#ffd966,stroke:#4a4a4a,stroke-width:2px
     style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
     style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
-
-    %% === Flechas con contorno blanco + relleno negro ===
-    linkStyle default stroke:#ffffff, stroke-width: 5px
-    linkStyle default stroke:#1a1a1a, stroke-width:2px, color:#1a1a1a
 ```
