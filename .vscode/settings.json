@@ -18,9 +18,12 @@
         "Modbus",
         "MPPT",
         "piranómetro",
+        "piranómetros",
         "regulatorias",
         "seccionamiento",
         "seleccionamiento",
+        "sobrefrecuencias",
+        "subgeneración",
         "telemetría"
     ]
 }
