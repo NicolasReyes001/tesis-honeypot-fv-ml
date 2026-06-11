@@ -99,7 +99,7 @@ Para el procesamiento y clasificación automática de los eventos registrados po
     'rankSpacing': 55,
     'curve': 'basis'
   },
-  'themeCSS': '.edgePath .path { stroke: #000000 !important; stroke-width: 3.5px !important; filter: drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff); } .edgePath .arrowheadPath { fill: #000000 !important; stroke: none !important; filter: drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 1.5px #ffffff); }'
+  'themeCSS': 'svg { background-color: #ffffff !important; } .mermaid { background-color: #ffffff !important; border-radius: 8px; }'
 }}%%
 graph TD
     A[Atacante simulado/real] -->|FDIA, Covert, Replay| B(Honeypot<br>Raspberry Pi 4 / Docker)
@@ -111,4 +111,7 @@ graph TD
     style B fill:#ffd966,stroke:#4a4a4a,stroke-width:2px
     style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
     style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
+
+    %% Líneas negras sólidas y un poco más gruesas para máximo contraste sobre el blanco
+    linkStyle default stroke:#000000, stroke-width:3px
 ```
