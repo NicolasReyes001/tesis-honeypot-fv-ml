@@ -86,32 +86,38 @@ Para el procesamiento y clasificación automática de los eventos registrados po
     'fontSize': '15px',
     'primaryColor': '#ffffff',
     'edgeLabelBackground': '#ffffff',
-    'lineColor': '#000000',
+    'lineColor': '#4a4a4a',
     'mainBkg': '#ffffff',
     'nodeBorder': '#4a4a4a',
     'actorBorder': '#4a4a4a',
     'textColor': '#1a1a1a',
-    'arrowheadColor': '#000000'
+    'arrowheadColor': '#1a1a1a'
   },
   'flowchart': {
     'useMaxWidth': true,
     'nodeSpacing': 45,
     'rankSpacing': 55,
     'curve': 'basis'
-  },
-  'themeCSS': 'svg { background-color: #ffffff !important; } .mermaid { background-color: #ffffff !important; border-radius: 8px; }'
+  }
 }}%%
 graph TD
-    A[Atacante simulado/real] -->|FDIA, Covert, Replay| B(Honeypot<br>Raspberry Pi 4 / Docker)
-    F[Simulación FV] -->|Tráfico legítimo| B
-    B -->|Registra eventos| C[Logs JSON + PostgreSQL]
-    C -->|10 Features| D[Random Forest<br>5 clases]
-    D -->|Clasifica| E[Dashboard Grafana]
-    
-    style B fill:#ffd966,stroke:#4a4a4a,stroke-width:2px
-    style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
-    style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
+    subgraph Contenedor [" "]
+        direction TD
+        A[Atacante simulado/real] -->|FDIA, Covert, Replay| B(Honeypot<br>Raspberry Pi 4 / Docker)
+        F[Simulación FV] -->|Tráfico legítimo| B
+        B -->|Registra eventos| C[Logs JSON + PostgreSQL]
+        C -->|10 Features| D[Random Forest<br>5 clases]
+        D -->|Clasifica| E[Dashboard Grafana]
+        
+        style B fill:#ffd966,stroke:#4a4a4a,stroke-width:2px
+        style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
+        style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
+    end
 
-    %% Líneas negras sólidas y un poco más gruesas para máximo contraste sobre el blanco
-    linkStyle default stroke:#000000, stroke-width:3px
+    %% === Estilo para la caja contenedora ===
+    style Contenedor fill:#ffffff,stroke:#4a4a4a,stroke-width:2px
+
+    %% === Flechas con contorno blanco + relleno negro ===
+    linkStyle default stroke:#ffffff, stroke-width: 5px
+    linkStyle default stroke:#1a1a1a, stroke-width:2px, color:#1a1a1a
 ```
