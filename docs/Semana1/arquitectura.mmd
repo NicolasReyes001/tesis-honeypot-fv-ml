@@ -1,0 +1,90 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'fontSize': '13px',
+    'primaryColor': '#ffffff',
+    'edgeLabelBackground': '#ffffff',
+    'lineColor': '#2c3e50',
+    'mainBkg': '#ffffff',
+    'nodeBorder': '#34495e',
+    'textColor': '#2c3e50',
+    'arrowheadColor': '#2c3e50'
+  },
+  'flowchart': {
+    'useMaxWidth': true,
+    'nodeSpacing': 40,
+    'rankSpacing': 45,
+    'curve': 'basis'
+  }
+}}%%
+
+flowchart TD
+    subgraph Arquitectura_Total ["Arquitectura de Flujo de Datos Honey-Grid"]
+        %% --- ENTRADA DE DATOS AMBIENTALES ---
+        subgraph Capa_0 ["Capa 1 Ingesta Externa"]
+            NASA["NASA POWER API"] -->|Irradiancia G_t e Históricos| SIM_FV
+        end
+
+        %% --- SIMULACIÓN FOTOVOLTAICA ---
+        subgraph Capa_1 ["Capa 2 Simulación Fotovoltaica"]
+            SIM_FV["Módulo de Simulación FV - Script Python / Docker"]
+            SIM_FV -->|Modelo de 1 Diodo| ELEC["Cálculo Eléctrico: V_dc, I_dc, P_t, T_panel"]
+            SIM_FV -->|Relaciones Inversor| AC_EST["Estimación AC: Eficiencia, E_acum, Estado"]
+        end
+
+        %% --- PROTOCOLOS INDUSTRIALES Y EXPOSICIÓN ---
+        subgraph Capa_2 ["Capa 3 Superficie Señuelo - Honeypot"]
+            ELEC -->|Mapeo LAN| MB_SERV["PyModbus Señuelo - Puerto 502"]
+            AC_EST -->|Mapeo LAN| MB_SERV
+            ELEC -->|Publicación IIoT| MQ_BROK["Mosquitto MQTT - Puerto 1883"]
+            AC_EST -->|Publicación IIoT| MQ_BROK
+            
+            SSH["Cowrie SSH señuelo - Puerto 22"]
+            HTTP["Servidor Web Ligero - Puerto 80"]
+        end
+
+        %% --- INTERACCIÓN Y AMENAZAS ---
+        subgraph Capa_3 ["Capa 4 Interacción Externa y Tráfico"]
+            INTERACCION{"Tráfico en el Laboratorio ó Conexiones Reales"}
+            INTERACCION -->|Escaneo / Fuerza Bruta| SSH
+            INTERACCION -->|Reconocimiento Web| HTTP
+            INTERACCION -->|Ataques DoS, Replay, FDIA| MB_SERV
+            INTERACCION -->|Ataques DoS, Replay, FDIA| MQ_BROK
+        end
+
+        %% --- CAPTURA DE EVENTOS ---
+        subgraph Capa_4 ["Capa 5 Captura y Procesamiento Crudo"]
+            SSH -->|Logs JSON| COW_LOG["Cowrie Logs JSON"]
+            HTTP -->|Tráfico PCAP| TCPD["tcpdump Archivos PCAP"]
+            MB_SERV -->|Tráfico PCAP| TCPD
+            MQ_BROK -->|Tráfico PCAP| TCPD
+        end
+
+        %% --- PARSING Y PERSISTENCIA ---
+        subgraph Capa_5 ["Capa 6 Extracción y Almacenamiento"]
+            COW_LOG --> PARSER["Parser Python - Extracción de Features"]
+            TCPD --> PARSER
+            PARSER -->|Inserción ID Único| DB[("Base de Datos SQLite")]
+        end
+
+        %% --- DATASET Y MACHINE LEARNING ---
+        subgraph Capa_6 ["Capa 7 Ingeniería de Datos y ML"]
+            DB --> DATASET["Pipeline Dataset - Limpieza y Etiquetado 7 Clases"]
+            DATASET -->|Vector Características| ML["Clasificador Random Forest - Offline"]
+        end
+
+        %% --- VISUALIZACIÓN UNIFICADA ---
+        subgraph Capa_7 ["Capa 8 Visualización y Alertas"]
+            ML -->|Alertas e Historial| DASH["Dashboard Streamlit - Grafana Futuro"]
+            SIM_FV -->|Línea Directa: Telemetría Activa| DASH
+        end
+
+        style NASA fill:#d4e6f1,stroke:#2980b9,stroke-width:2px
+        style SIM_FV fill:#e8f8f5,stroke:#16a085,stroke-width:2px
+        style INTERACCION fill:#fadbd8,stroke:#c0392b,stroke-width:2px
+        style DB fill:#fef9e7,stroke:#d4ac0d,stroke-width:2px
+        style ML fill:#ebdef0,stroke:#8e44ad,stroke-width:2px
+        style DASH fill:#d5f5e3,stroke:#27ae60,stroke-width:2px
+    end
+
+    style Arquitectura_Total fill:#ffffff,stroke:#2c3e50,stroke-width:3px
