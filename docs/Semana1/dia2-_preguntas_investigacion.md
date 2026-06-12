@@ -48,7 +48,7 @@ Si el honeypot expone simultáneamente servicios representativos de entornos fot
 
 El método es desplegar y monitorear de forma centralizada a superficie de ataque multi-servicio (puertos 80, 22, 502 y 1883), con esto se espera obtener un mínimo de 500 eventos etiquetados por clase, con menos del 5% de registros incompletos, suficientes para entrenar el modelo.
 
-La justificación de esto es que al abrir servicios específicos como OT o IoT, los ataques puedan transformarse en datos utilizados como marcas de tiempo, credenciales y comandos específicos en el sector energético.
+La justificación radica en que al exponer servicios específicos de entornos OT e IoT, los ataques dejan de ser intentos genéricos y se transforman en datos estructurados que incluyen marcas de tiempo, credenciales y comandos específicos del sector energético, los cuales son insumo directo para la construcción del dataset.
 
 ## 4. Variables del sistema
 

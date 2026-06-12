@@ -14,7 +14,7 @@ Bloque de evaluación o interconexión: En esta etapa se adecúa la energía par
 
 En la industria moderna se requiere el control, automatización y supervisión de distintos procesos para lograr la mejor eficiencia, reducir altos costos e identificar problemas antes de que escalen, ahí es donde entran los sistemas SCADA industrial que por sus siglas (Supervisory Control and Data Acquisition) constituyen la solución de software y hardware diseñados en específico para cumplir los requerimientos de supervisión, control y automatización en procesos industriales o infraestructura crítica. 
 
-En caso de los sistemas fotovoltaicos, el SCADA es el encargado es el encargado de garantizar la eficiencia, estabilidad de la red y el mantenimiento predictivo. El SCADA actúa como el núcleo de la tecnología de la operación (OT), centralizando las lecturas críticas del sistema como lo son: potencias (activas/reactivas), tensión, corriente, irradiancia de piranómetro y temperaturas de celdas, no solo se conecta a la parte de potencia, sino que también está conectado a sensores y actuadores necesarios para la supervisión del sistema lo que permite el envío de información y de comandos de control hacia los inversores como puede ser una regulación de rampa de inyección o seccionamiento de emergencia.
+En caso de los sistemas fotovoltaicos, el SCADA es el encargado de garantizar la eficiencia, estabilidad de la red y el mantenimiento predictivo. El SCADA actúa como el núcleo de la tecnología de la operación (OT), centralizando las lecturas críticas del sistema como lo son: potencias (activas/reactivas), tensión, corriente, irradiancia de piranómetro y temperaturas de celdas, no solo se conecta a la parte de potencia, sino que también está conectado a sensores y actuadores necesarios para la supervisión del sistema lo que permite el envío de información y de comandos de control hacia los inversores como puede ser una regulación de rampa de inyección o seccionamiento de emergencia.
 
 #### Comunicación Modbus/MQTT.
 
@@ -103,10 +103,10 @@ Para el procesamiento y clasificación automática de los eventos registrados po
 graph TD
     subgraph Sistema_propuesto [" "]
         direction TD
-        A[Atacante simulado/real] -->|FDIA, Covert, Replay| B(Honeypot<br>Raspberry Pi 4 / Docker)
+        A[Atacante simulado/real] -->|FDIA, RA, DoS, Scan...| B(Honeypot<br>Raspberry Pi 4 / Docker)
         F[Simulación FV] -->|Tráfico legítimo| B
-        B -->|Registra eventos| C[Logs JSON + PostgreSQL]
-        C -->|10 Features| D[Random Forest<br>5 clases]
+        B -->|Registra eventos| C[Logs JSON + SQLite]
+        C -->|10 Features| D[Random Forest<br>7 clases]
         D -->|Clasifica| E[Dashboard Grafana]
         
         style A fill:#FF0000,stroke:#4a4a4a,stroke-width:2px
