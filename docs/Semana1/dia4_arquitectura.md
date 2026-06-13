@@ -169,7 +169,7 @@ Las siete clases del dataset son las siguientes:
 |---|---|---|
 | 0 | Normal | Tráfico legítimo sin indicios de actividad maliciosa |
 | 1 | Escaneo | Exploración de puertos o descubrimiento de servicios |
-| 2 | Fuerza bruta | Intentos repetidos de autenticación sobre SSH |
+| 2 | Fuerza bruta / Intrusión SSH | Intentos repetidos de autenticación SSH y sesiones con acceso exitoso seguido de actividad maliciosa |
 | 3 | Manipulación Modbus/MQTT | Acceso no autorizado a registros Modbus o tópicos MQTT |
 | 4 | DoS/DDoS | Inundación de conexiones para saturar un servicio |
 | 5 | Replay Attack | Reenvío diferido de tramas legítimas para acciones no autorizadas |

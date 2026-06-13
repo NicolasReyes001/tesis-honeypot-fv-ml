@@ -80,9 +80,9 @@ Se refiere a todo tráfico legítimo sin indicios de actividad maliciosa que imp
 
 Indica la exploración de puertos o descubrimiento de servicios activos en la red del sistema.
 
-#### Clase 2 (Fuerza bruta):
+#### Clase 2 (Fuerza bruta/Intrusión SSH):
 
-Son todos los intentos repetidos y automatizados de autenticación sobre el servicio SSH del sistema.
+comprende tanto los intentos repetidos y automatizados de autenticación sobre el servicio SSH como las sesiones en las que el atacante logra acceso exitoso y ejecuta a continuación actividad maliciosa, incluyendo comandos de reconocimiento del sistema, intentos de escalada de privilegios o descarga de herramientas externas. Ambos escenarios son capturados por Cowrie y comparten el mismo vector de ataque, por lo que se agrupan bajo una única clase.
 
 #### Clase 3 (Manipulación Modbus/MQTT):
 
