@@ -30,9 +30,9 @@ Las preguntas formuladas permiten evaluar integralmente los componentes de la pr
 
 Si se alimenta la interfaz de los servidores señuelos (Modbus TCP y MQTT) con un modelo dinámico físico-matemático basado en ecuaciones del inversor, como la eficiencia y datos de irradiancia local, entonces las mediciones de lecturas externas de potencia, voltaje y corriente mantendrán una desviación porcentual menor al 5% respecto al comportamiento real de la planta fotovoltaica.
 
-El método consta en poder vincular el modelo matemático-solar y los datos históricos a servicios como lo son el Modbus TCP y MQTT, los cuales están expuestos en la Raspberry Pi 4; con esto se espera lograr que la desviación de las variables obtenidas sea menor al 5% y así lograr un entorno señuelo creíble y útil para la captura de ataques cibernéticos.
+El método consiste en vincular el modelo matemático-solar y los datos históricos a servicios como lo son el Modbus TCP y MQTT, los cuales están expuestos en la Raspberry Pi 4; con esto se espera lograr que la desviación de las variables obtenidas sea menor al 5% y así lograr un entorno señuelo creíble y útil para la captura de ataques cibernéticos.
 
-La justificación radica en que al exponer servicios OT e IoT, los ataques dejan de ser ruido genérico y se transforman en eventos con marcas de tiempo, credenciales y comandos específicos del sector eléctrico solar.
+La justificación radica en que al exponer servicios OT e IoT, los ataques dejan de ser ruido genérico y se transforman en datos estructurados que incluyen marcas de tiempo, credenciales y comandos específicos del sector eléctrico solar.
 
 #### Hipótesis 2.
 
@@ -86,7 +86,7 @@ Son todos los intentos repetidos y automatizados de autenticación sobre el serv
 
 #### Clase 3 (Manipulación Modbus/MQTT):
 
-Intentos de lectura o escritura no autorizada sobre registros del servidor Modbus TCP, o manipulación indebida de tópicos MQTT mediante publicaciones o suscripciones no legítimas
+Intentos de lectura o escritura no autorizada sobre registros del servidor Modbus TCP, o manipulación indebida de tópicos MQTT mediante publicaciones o suscripciones no legítimas.
 
 #### Clase 4 (DoS/DDoS):
 
@@ -114,7 +114,7 @@ El flujo se origina en el módulo de simulación fotovoltaica, el cual genera de
 
 La telemetría generada por la simulación alimenta directamente los servicios señuelo del honeypot, desplegado sobre la Raspberry Pi 4 mediante contenedores Docker. El honeypot expone cuatro superficies de ataque: un servidor SSH, un servidor HTTP que emula la interfaz web de administración del inversor, el servidor Modbus TCP y el bróker MQTT. Dado que los servicios expuestos no forman parte de ningún flujo operativo legítimo, toda interacción que se produzca con alguno de ellos es considerada por definición como un evento de interés para el sistema, lo cual simplifica el proceso de etiquetado y elimina la necesidad de filtrar tráfico autorizado durante la construcción del dataset. El honeypot captura, por protocolo, las credenciales de autenticación y comandos ejecutados en sesiones SSH, las solicitudes de lectura o escritura sobre registros Modbus TCP junto con sus direcciones y códigos de función, las operaciones de publicación y suscripción realizadas sobre tópicos MQTT, y los parámetros de red transversales como puerto de destino, tamaño del payload, tasa de paquetes y duración de la sesión. Para la captura de sesiones SSH se empleará la herramienta Cowrie, mientras que el tráfico de red será registrado mediante tcpdump para su posterior análisis.
 
-Los archivos de captura generados por tcpdump en formato PCAP serán procesados mediante un script de Python que extraerá los atributos de red relevantes de cada flujo, como puerto de destino, duración, tasa de paquetes y bytes transmitidos, y los normalizará en registros estructurados compatibles con el esquema de la base de datos, donde serán persistidos junto con los eventos capturados por Cowrie bajo un identificador de sesión común que permite correlacionar ambas fuentes durante la construcción del dataset.
+Los archivos de captura generados por tcpdump en formato PCAP serán procesados mediante el Parser Python, el cual extraerá los atributos de red relevantes de cada flujo, como puerto de destino, duración, tasa de paquetes y bytes transmitidos, y los normalizará en registros estructurados compatibles con el esquema de la base de datos, donde serán persistidos junto con los eventos capturados por Cowrie bajo un identificador de sesión común que permite correlacionar ambas fuentes durante la construcción del dataset.
 
 #### Base de datos — qué almacena.
 

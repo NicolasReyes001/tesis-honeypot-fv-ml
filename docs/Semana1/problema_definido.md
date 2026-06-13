@@ -14,7 +14,7 @@ Bloque de evaluación o interconexión: En esta etapa se adecúa la energía par
 
 En la industria moderna se requiere el control, automatización y supervisión de distintos procesos para lograr la mejor eficiencia, reducir altos costos e identificar problemas antes de que escalen, ahí es donde entran los sistemas SCADA industrial que por sus siglas (Supervisory Control and Data Acquisition) constituyen la solución de software y hardware diseñados en específico para cumplir los requerimientos de supervisión, control y automatización en procesos industriales o infraestructura crítica. 
 
-En caso de los sistemas fotovoltaicos, el SCADA es el encargado de garantizar la eficiencia, estabilidad de la red y el mantenimiento predictivo. El SCADA actúa como el núcleo de la tecnología de la operación (OT), centralizando las lecturas críticas del sistema como lo son: potencias (activas/reactivas), tensión, corriente, irradiancia de piranómetro y temperaturas de celdas, no solo se conecta a la parte de potencia, sino que también está conectado a sensores y actuadores necesarios para la supervisión del sistema lo que permite el envío de información y de comandos de control hacia los inversores como puede ser una regulación de rampa de inyección o seccionamiento de emergencia.
+En el caso de los sistemas fotovoltaicos, el SCADA es el encargado de garantizar la eficiencia, estabilidad de la red y el mantenimiento predictivo. El SCADA actúa como el núcleo de la tecnología de la operación (OT), centralizando las lecturas críticas del sistema como lo son: potencias (activas/reactivas), tensión, corriente, irradiancia de piranómetro y temperaturas de celdas, no solo se conecta a la parte de potencia, sino que también está conectado a sensores y actuadores necesarios para la supervisión del sistema lo que permite el envío de información y de comandos de control hacia los inversores como puede ser una regulación de rampa de inyección o seccionamiento de emergencia.
 
 #### Comunicación Modbus/MQTT.
 
@@ -61,7 +61,7 @@ Además también impacta en pérdidas económicas por penalizaciones regulatoria
 
 ## 5. Problema final. 
 
-La vulnerabilidad ciberfísica en plantas fotovoltaicas por la ausencia de cifrado y autenticación nativa en los protocolos Modbus TCP y MQTT que gestionan la infraestructura SCADA e IIoT. Esta condición se agrava por un vacío metodológico-industrial: las normativas de seguridad eléctrica prohíben la simulación de vectores de ataque (como FDIA, Covert y Replay Attacks) en entornos de producción reales. En consecuencia, existe una imposibilidad técnica para capturar firmas de tráfico anómalo en redes de Tecnología de la Operación (OT), bloqueando el entrenamiento de algoritmos de aprendizaje automático para la detección de intrusos.
+La vulnerabilidad ciberfísica en plantas fotovoltaicas radica en la ausencia de cifrado y autenticación nativa en los protocolos Modbus TCP y MQTT que gestionan la infraestructura SCADA e IIoT. Esta condición se agrava por un vacío metodológico-industrial: las normativas de seguridad eléctrica prohíben la simulación de vectores de ataque (como FDIA, Covert y Replay Attacks) en entornos de producción reales. En consecuencia, existe una imposibilidad técnica para capturar firmas de tráfico anómalo en redes de Tecnología de la Operación (OT), bloqueando el entrenamiento de algoritmos de aprendizaje automático para la detección de intrusos.
 
 La persistencia de esta vulnerabilidad induce a una ceguera operativa severa, volviendo indetectable la manipulación encubierta de variables críticas para los sistemas de seguridad de TI tradicionales. Sin un entorno de emulación ciberfísico seguro, la infraestructura permanece expuesta a sabotajes remotos capaces de provocar fallas térmicas destructivas en inversores centrales y transformadores. Asimismo, se derivan penalizaciones financieras por subgeneración ante el incumplimiento de códigos de red, e inestabilidad de frecuencia y voltaje en el Punto de Conexión Común (PCC), comprometiendo la confiabilidad del sistema interconectado nacional.
 
@@ -101,7 +101,7 @@ Para el procesamiento y clasificación automática de los eventos registrados po
   }
 }}%%
 graph TD
-    subgraph Sistema_propuesto [" "]
+    subgraph Arquitectura_del_Sistema [" "]
         direction TD
         A[Atacante simulado/real] -->|FDIA, RA, DoS, Scan...| B(Honeypot<br>Raspberry Pi 4 / Docker)
         F[Simulación FV] -->|Tráfico legítimo| B
@@ -109,15 +109,15 @@ graph TD
         C -->|10 Features| D[Random Forest<br>7 clases]
         D -->|Clasifica| E[Dashboard Grafana]
         
-        style A fill:#FF0000,stroke:#4a4a4a,stroke-width:2px
+        style A fill:#E74C3C,stroke:#4a4a4a,stroke-width:2px
         style B fill:#ffd966,stroke:#4a4a4a,stroke-width:2px
         style D fill:#a4c2f4,stroke:#4a4a4a,stroke-width:2px
         style E fill:#b6d7a8,stroke:#4a4a4a,stroke-width:2px
-        style F fill:#00FFFF,stroke:#4a4a4a,stroke-width:2px
+        style F fill:#85C1E9,stroke:#4a4a4a,stroke-width:2px
     end
 
     %% === Estilo para la caja contenedora ===
-    style Sistema_propuesto fill:#ffffff,stroke:#4a4a4a,stroke-width:2px
+    style Arquitectura_del_Sistema fill:#ffffff,stroke:#4a4a4a,stroke-width:2px
 
     %% === Flechas con contorno blanco + relleno negro ===
     linkStyle default stroke:#ffffff, stroke-width: 5px
