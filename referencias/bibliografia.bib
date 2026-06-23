@@ -1,0 +1,378 @@
+%% ============================================================
+%% BIBLIOGRAFÍA DEL PROYECTO
+%% Honeypot para Sistemas Fotovoltaicos con Detección por ML
+%% Universidad Santo Tomás — Ingeniería Electrónica
+%% Formato: BibTeX — Estilo IEEE
+%% ============================================================
+
+%% -----------------------------------------------------------
+%% SECCIÓN 1: HONEYPOTS INDUSTRIALES (ICS/SCADA)
+%% -----------------------------------------------------------
+
+@article{grigoriou2023honeypots,
+  author    = {Grigoriou, Evangelos and others},
+  title     = {Analysis of {ICS} and {SCADA} Systems Attacks Using Honeypots},
+  journal   = {Future Internet},
+  volume    = {15},
+  number    = {7},
+  pages     = {241},
+  year      = {2023},
+  publisher = {MDPI},
+  doi       = {10.3390/fi15070241},
+  url       = {https://www.mdpi.com/1999-5903/15/7/241},
+  note      = {Honeypot de baja interacción (Conpot) para ICS/SCADA genérico. Confirma exposición masiva de dispositivos sin seguridad adecuada.}
+}
+
+@inproceedings{lemay2016scada,
+  author    = {Lemay, Antoine and Fernandez, Jose M.},
+  title     = {Providing {SCADA} Network Data Sets for Intrusion Detection Research},
+  booktitle = {9th USENIX Workshop on Cyber Security Experimentation and Test (CSET 16)},
+  year      = {2016},
+  publisher = {USENIX Association},
+  url       = {https://www.usenix.org/conference/cset16/workshop-program/presentation/lemay},
+  note      = {Generación de dataset etiquetado con tráfico Modbus benigno y malicioso. Modelo metodológico para construir el dataset propio.}
+}
+
+@inproceedings{radoglou2020modbus,
+  author    = {Radoglou-Grammatikis, Panagiotis and Siniosoglou, Ilias and Liatifis, Athanasios and Kourouniadis, Apostolos and Rompolos, Konstantinos and Sarigiannidis, Panagiotis},
+  title     = {Implementation and Detection of {Modbus} Cyberattacks},
+  booktitle = {2020 9th International Conference on Modern Circuits and Systems Technologies (MOCAST)},
+  year      = {2020},
+  pages     = {1--4},
+  address   = {Bremen, Germany},
+  doi       = {10.1109/MOCAST49295.2020.9200287},
+  note      = {Pipeline honeypot Modbus + BD + clasificador ML. Metodológicamente el más cercano al presente proyecto.}
+}
+
+@inproceedings{frazao2018dos,
+  author    = {Frazão, Inês and Abreu, Pedro H. and Cruz, Tiago and Araújo, Hugo and Simões, Paulo},
+  title     = {Denial of Service Attacks: Detecting the Frailties of Machine Learning Algorithms in the Classification Process},
+  booktitle = {13th International Conference on Critical Information Infrastructures Security (CRITIS 2018)},
+  year      = {2018},
+  address   = {Kaunas, Lithuania},
+  publisher = {Springer},
+  series    = {Lecture Notes in Computer Science},
+  doi       = {10.1007/978-3-030-05849-4_19},
+  note      = {Evaluación de fragilidades de ML en clasificación de DoS sobre Modbus. Respalda elección de Random Forest.}
+}
+
+@dataset{frazao2019dataset,
+  author    = {Frazão, Inês and Abreu, Pedro and Cruz, Tiago and Araújo, Hugo and Simões, Paulo},
+  title     = {Cyber-Security {Modbus} {ICS} Dataset},
+  year      = {2019},
+  publisher = {IEEE DataPort},
+  doi       = {10.21227/pjff-1a03},
+  note      = {Dataset público de tráfico Modbus etiquetado. Referencia para comparación y complemento de clases del dataset propio.}
+}
+
+@misc{nawrocki2016honeypot,
+  author        = {Nawrocki, Matthias and Wählisch, Matthias and Schmidt, Thomas C. and Keil, Christian and Schönfelder, Jonas},
+  title         = {A survey on honeypot software and data analysis},
+  year          = {2016},
+  eprint        = {1608.06249},
+  archiveprefix = {arXiv},
+  url           = {https://arxiv.org/abs/1608.06249},
+  note          = {Encuesta de software de honeypot y análisis de datos. Marco teórico general.}
+}
+
+@misc{icssim2022,
+  author        = {{ICSSIM Authors}},
+  title         = {{ICSSIM}: A Framework for Building Industrial Control Systems Security Simulation Testbeds},
+  year          = {2022},
+  eprint        = {2210.13325},
+  archiveprefix = {arXiv},
+  url           = {https://arxiv.org/pdf/2210.13325},
+  note          = {Framework de simulación de testbeds ICS para seguridad. Referencia metodológica para el entorno de laboratorio.}
+}
+
+@misc{cowrie2023,
+  author = {Oosterhof, Michel},
+  title  = {Cowrie {SSH/Telnet} Honeypot},
+  year   = {2023},
+  url    = {https://github.com/cowrie/cowrie},
+  note   = {Repositorio oficial de Cowrie. Herramienta principal del módulo honeypot SSH del proyecto.}
+}
+
+%% -----------------------------------------------------------
+%% SECCIÓN 2: HONEYPOTS MQTT e IIoT
+%% -----------------------------------------------------------
+
+@article{adaptive_mqtt_honeypot2025,
+  author    = {{Authors}},
+  title     = {Adaptive {MQTT} Honeypots for {IIoT} Security Using Extended Mealy Machines},
+  year      = {2025},
+  publisher = {Springer Nature},
+  url       = {https://link.springer.com/chapter/10.1007/978-3-032-13714-2_28},
+  note      = {Honeypot MQTT adaptativo con máquinas de estados extendidas. +23\% conexiones y +40\% detección vs. honeypots IIoT previos.}
+}
+
+@misc{pirates_mqtt2024,
+  author = {{Authors}},
+  title  = {Pirates of the {MQTT}: Raiding {IIoT} Systems with a Rogue Client},
+  year   = {2024},
+  url    = {https://www.researchgate.net/publication/384011283},
+  note   = {Estudio de inyección de datos falsos y ataques de repetición sobre MQTT. Valida inclusión de clases FDIA y Replay en el dataset.}
+}
+
+%% -----------------------------------------------------------
+%% SECCIÓN 3: CIBERSEGURIDAD EN SISTEMAS FOTOVOLTAICOS
+%% -----------------------------------------------------------
+
+@techreport{forescout_sundown2025,
+  author      = {{Forescout Vedere Labs}},
+  title       = {{SUN:DOWN} — Destabilizing the Grid via Orchestrated Exploitation of Solar Power Systems},
+  institution = {Forescout Research},
+  year        = {2025},
+  month       = {March},
+  url         = {https://www.forescout.com/resources/sun-down-research-report/},
+  note        = {46 vulnerabilidades nuevas en inversores Sungrow, Growatt y SMA. 80\% de severidad alta/crítica (CVSS 9.8–10). Principal evidencia de riesgo real.}
+}
+
+@misc{forescout_exposed2025,
+  author = {{Forescout Vedere Labs}},
+  title  = {The Security Risks of Internet-Exposed Solar Power Systems},
+  year   = {2025},
+  month  = {June},
+  url    = {https://www.forescout.com/blog/the-security-risks-of-internet-exposed-solar-power-systems/},
+  note   = {35.000 dispositivos solares con interfaces de administración expuestas en Internet. 76\% en Europa.}
+}
+
+@techreport{nist_ir8498,
+  author      = {{NIST National Cybersecurity Center of Excellence (NCCoE)}},
+  title       = {{NIST IR 8498} — Cybersecurity for Smart Inverters: Guidelines for Residential and Light Commercial Solar Energy Systems},
+  institution = {National Institute of Standards and Technology},
+  url         = {https://www.nccoe.nist.gov/projects/cybersecurity-smart-inverters-guidelines-residential-and-light-commercial-solar-energy},
+  note        = {Guía institucional NIST sobre amenazas a inversores inteligentes. Evidencia regulatoria de la relevancia del problema.}
+}
+
+@misc{cso_japan_solar2024,
+  author = {{CSO Online}},
+  title  = {Hijack of monitoring devices highlights cyber threat to solar power infrastructure},
+  year   = {2024},
+  month  = {May},
+  url    = {https://www.csoonline.com/article/2119281/hijack-of-monitoring-devices-highlights-cyber-threat-to-solar-power-infrastructure.html},
+  note   = {Primer ciberataque confirmado sobre infraestructura FV: 800 dispositivos SolarView Compact secuestrados en Japón (CVE-2022-29303).}
+}
+
+@misc{iotm2m_japan2024,
+  author = {{IoT M2M Council}},
+  title  = {Attackers hijack solar panel monitoring devices in {Japan}},
+  year   = {2024},
+  month  = {June},
+  url    = {https://www.iotm2mcouncil.org/iot-library/news/smart-energy-news/attackers-hijack-solar-panel-monitoring-devices-in-japan/},
+  note   = {Cobertura adicional del caso SolarView Compact. Contexto técnico del ataque.}
+}
+
+@misc{pvmagazine_malware2024,
+  author = {{pv magazine International}},
+  title  = {What happens when malware hits {PV} systems},
+  year   = {2024},
+  month  = {November},
+  url    = {https://www.pv-magazine.com/2024/11/06/what-happens-when-malware-hits-pv-systems/},
+  note   = {Análisis de consecuencias operativas de malware en sistemas fotovoltaicos.}
+}
+
+@inproceedings{singla2025dos_inverters,
+  author    = {Singla, A. and others},
+  title     = {Cybersecurity Vulnerabilities in Grid-Connected Smart Inverters: Experimental Analysis of {DoS} Attack Vectors},
+  booktitle = {IEEE Applied Power Electronics Conference and Exposition (APEC) 2025},
+  year      = {2025},
+  doi       = {10.1109/APEC48139.2025.10977548},
+  url       = {https://ieeexplore.ieee.org/document/10977548},
+  note      = {Análisis experimental de vectores DoS sobre inversores conectados a la red. Evidencia técnica para la Clase 4 del dataset.}
+}
+
+@misc{powerelectronics_dos2025,
+  author = {Lovati, Silvano},
+  title  = {Cybersecurity Vulnerabilities in Grid-Connected Smart Inverters: A Technical Analysis of {DoS} Threats},
+  year   = {2025},
+  month  = {August},
+  url    = {https://www.powerelectronicsnews.com/cybersecurity-vulnerabilities-in-grid-connected-smart-inverters-a-technical-analysis-of-dos-threats/},
+  note   = {Análisis técnico de amenazas DoS sobre inversores inteligentes en red.}
+}
+
+%% -----------------------------------------------------------
+%% SECCIÓN 4: ATAQUES INDUSTRIALES (MITM, FDIA, REPLAY)
+%% -----------------------------------------------------------
+
+@inproceedings{liu2009fdia,
+  author    = {Liu, Yao and Ning, Peng and Reiter, Michael K.},
+  title     = {False Data Injection Attacks Against State Estimation in Electric Power Grids},
+  booktitle = {Proceedings of the 16th ACM Conference on Computer and Communications Security (CCS '09)},
+  year      = {2009},
+  pages     = {21--32},
+  address   = {Chicago, Illinois, USA},
+  doi       = {10.1145/1653662.1653666},
+  note      = {Paper seminal sobre FDIA en redes eléctricas. Base teórica para la Clase 6 del dataset.}
+}
+
+@article{liu2011fdia_extended,
+  author  = {Liu, Yao and Ning, Peng and Reiter, Michael K.},
+  title   = {False Data Injection Attacks Against State Estimation in Electric Power Grids},
+  journal = {ACM Transactions on Information and System Security (TISSEC)},
+  volume  = {14},
+  number  = {1},
+  pages   = {Article 13},
+  year    = {2011},
+  doi     = {10.1145/1952982.1952995},
+  note    = {Versión extendida del paper seminal sobre FDIA. 33 páginas.}
+}
+
+@article{rajesh2021replay,
+  author  = {Rajesh, L. and Satyanarayana, P.},
+  title   = {Detection and Blocking of Replay, False Command, and False Access Injection Commands in {SCADA} Systems with {Modbus} Protocol},
+  journal = {Security and Communication Networks},
+  volume  = {2021},
+  pages   = {Article 8887666},
+  year    = {2021},
+  doi     = {10.1155/2021/8887666},
+  note    = {Detección de Replay Attacks y comandos falsos en SCADA/Modbus. Base teórica para la Clase 5 del dataset.}
+}
+
+@misc{sanchez2017mitm,
+  author      = {Sanchez, Guillermo},
+  title       = {Man-in-the-Middle Attack Against {Modbus TCP} Illustrated with {Wireshark}},
+  year        = {2017},
+  institution = {SANS Institute / GIAC},
+  url         = {https://www.giac.org/paper/gccc/817/man-in-the-middle-attack-modbus-tcp-illustrated-wireshark/116887},
+  note        = {Demostración técnica de MITM sobre Modbus TCP con Ettercap y Wireshark. Referencia práctica para el diseño del escenario de ataque.}
+}
+
+@misc{armis_modipwn,
+  author = {{Armis Research}},
+  title  = {{ModiPwn} — {ARP} Spoofing and Man-in-the-Middle Attacks Against Modicon {PLCs}},
+  url    = {https://www.armis.com/research/modipwn/},
+  note   = {Demostración de ARP spoofing y MITM en PLCs Modicon. Contexto real de la amenaza en entornos OT.}
+}
+
+@misc{mitre_t830,
+  author = {{MITRE}},
+  title  = {{ATT\&CK} for {ICS} — Technique {T830}: Man in the Middle},
+  url    = {https://collaborate.mitre.org/attackics/index.php/Technique/T830},
+  note   = {Clasificación MITRE ATT\&CK ICS del ataque MITM. Marco de referencia para taxonomía de amenazas.}
+}
+
+%% -----------------------------------------------------------
+%% SECCIÓN 5: MACHINE LEARNING PARA IDS
+%% -----------------------------------------------------------
+
+@inproceedings{liu2008isolation,
+  author    = {Liu, Fei Tony and Ting, Kai Ming and Zhou, Zhi-Hua},
+  title     = {Isolation Forest},
+  booktitle = {2008 Eighth IEEE International Conference on Data Mining},
+  year      = {2008},
+  pages     = {413--422},
+  doi       = {10.1109/ICDM.2008.17},
+  note      = {Algoritmo Isolation Forest para detección de anomalías. Referencia para el clasificador complementario del proyecto.}
+}
+
+@article{rf_smote2022,
+  author    = {{Authors}},
+  title     = {Intrusion Detection System Combined Enhanced Random Forest with {SMOTE} Algorithm},
+  journal   = {EURASIP Journal on Advances in Signal Processing},
+  year      = {2022},
+  publisher = {Springer Nature},
+  url       = {https://link.springer.com/article/10.1186/s13634-022-00871-6},
+  note      = {Random Forest mejorado con SMOTE para datasets desbalanceados. Referencia para manejo del desbalance en clases 5 y 6.}
+}
+
+@misc{comparison_rf_svm2024,
+  author = {{Authors}},
+  title  = {Comparison of Random Forest, {K-Nearest Neighbor}, and Support Vector Machine Classifiers for Intrusion Detection System},
+  year   = {2024},
+  url    = {https://www.researchgate.net/publication/383162577},
+  note   = {Comparación cuantitativa RF vs. KNN vs. SVM para IDS. Evidencia cuantitativa del desempeño superior de Random Forest.}
+}
+
+@article{comparison_svm_rf_ddos2025,
+  author  = {{Authors}},
+  title   = {Comparison of the Use of Support Vector Machine ({SVM}) \& Random Forest Algorithms ({RF}) for {DDoS} Attack Detection},
+  journal = {International Journal of Research and Innovation in Social Science},
+  year    = {2025},
+  url     = {https://rsisinternational.org/journals/ijriss/articles/comparison-of-the-use-of-support-vector-machine-svm-random-forest-algorithms-rf-for-ddos-attack-detection/},
+  note    = {RF supera SVM en detección de DDoS con menor tasa de falsos positivos.}
+}
+
+@misc{unsw_nb15,
+  author = {{University of New South Wales Canberra}},
+  title  = {{UNSW-NB15} Dataset},
+  url    = {https://research.unsw.edu.au/projects/unsw-nb15-dataset},
+  note   = {Dataset público de referencia para IDS. Usado para complementar las clases 5 (Replay) y 6 (FDIA) del dataset propio.}
+}
+
+%% -----------------------------------------------------------
+%% SECCIÓN 6: NORMAS Y ESTÁNDARES
+%% -----------------------------------------------------------
+
+@techreport{iec62443,
+  author      = {{IEC}},
+  title       = {{IEC 62443} — Security for Industrial Automation and Control Systems},
+  institution = {International Electrotechnical Commission},
+  note        = {Norma de seguridad para sistemas de automatización y control industrial. Marco normativo de referencia para el diseño del honeypot.}
+}
+
+@techreport{iec61158,
+  author      = {{IEC}},
+  title       = {{IEC 61158} — Industrial Communication Networks — Fieldbus Specifications (includes Modbus)},
+  institution = {International Electrotechnical Commission},
+  note        = {Estándar de referencia del protocolo Modbus en el contexto de redes de campo industriales.}
+}
+
+@techreport{iso_iec20922,
+  author      = {{ISO/IEC}},
+  title       = {{ISO/IEC 20922} — Information Technology — Message Queuing Telemetry Transport ({MQTT}) v3.1.1},
+  institution = {International Organization for Standardization / International Electrotechnical Commission},
+  note        = {Estándar internacional del protocolo MQTT v3.1.1. Especificación de referencia para el broker señuelo del proyecto.}
+}
+
+@techreport{ieee1547,
+  author      = {{IEEE}},
+  title       = {{IEEE} 1547 — Standard for Interconnection and Interoperability of Distributed Energy Resources with Associated Electric Power Systems Interfaces},
+  institution = {Institute of Electrical and Electronics Engineers},
+  note        = {Código de red internacional para sistemas fotovoltaicos conectados. Referencia para las consecuencias de los ataques sobre la estabilidad de la red.}
+}
+
+%% -----------------------------------------------------------
+%% SECCIÓN 7: LIBROS Y REFERENCIAS GENERALES
+%% -----------------------------------------------------------
+
+@book{spitzner2002honeypots,
+  author    = {Spitzner, Lance},
+  title     = {Honeypots: Tracking Hackers},
+  publisher = {Addison-Wesley},
+  year      = {2002},
+  note      = {Referencia clásica sobre honeypots. Marco teórico para la clasificación y propósito de los honeypots del proyecto.}
+}
+
+@article{sokol2017honeypots,
+  author  = {Sokol, Pavol and Míšek, Jakub and Husák, Martin},
+  title   = {Honeypots and honeynets: issues of privacy},
+  journal = {EURASIP Journal on Information Security},
+  volume  = {2017},
+  number  = {1},
+  pages   = {1--9},
+  year    = {2017},
+  note    = {Análisis de aspectos de privacidad en sistemas honeypot. Contexto ético del proyecto.}
+}
+
+@article{chamotra2018honeypot,
+  author  = {Chamotra, Saurabh and Sehgal, Rakesh Kumar and Misra, Rajeev S.},
+  title   = {Honeypot baiting and forensics for proactive cyber threat intelligence},
+  journal = {Computers \& Security},
+  volume  = {73},
+  pages   = {182--200},
+  year    = {2018},
+  note    = {Inteligencia de amenazas proactiva mediante honeypots. Justifica el enfoque del proyecto como honeypot de investigación.}
+}
+
+%% -----------------------------------------------------------
+%% SECCIÓN 8: FUENTES DE DATOS Y APIs
+%% -----------------------------------------------------------
+
+@misc{nasa_power,
+  author = {{NASA}},
+  title  = {{NASA POWER} — Prediction of Worldwide Energy Resources},
+  url    = {https://power.larc.nasa.gov/},
+  note   = {API de datos históricos de irradiancia solar. Fuente de datos de entrada al módulo de simulación FV para Santa Marta, Colombia.}
+}
+
