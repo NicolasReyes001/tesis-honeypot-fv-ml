@@ -1,0 +1,176 @@
+# ============================================================
+# Docker Compose — Honeypot FV con Detección por ML
+# Universidad Santo Tomás — Ingeniería Electrónica
+#
+# Plataforma destino: Raspberry Pi 4 (4 GB RAM, Ubuntu 24.04)
+# Arquitectura: linux/arm64
+#
+# Uso:
+#   docker compose up -d          # levantar todos los servicios
+#   docker compose logs -f        # ver logs en tiempo real
+#   docker compose down           # detener y eliminar contenedores
+#   docker compose ps             # estado de los servicios
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # 1. Honeypot SSH — Cowrie
+  # Puerto 22 expuesto externamente → 2222 interno de Cowrie
+  # ----------------------------------------------------------
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: honeypot-ssh
+    restart: unless-stopped
+    ports:
+      - "22:2222"
+    volumes:
+      - ./honeypot/cowrie/cowrie.cfg:/cowrie/etc/cowrie.cfg:ro
+      - ./honeypot/cowrie/userdb.txt:/cowrie/etc/userdb.txt:ro
+      - ./honeypot/capturas/cowrie:/cowrie/var/log/cowrie
+    networks:
+      - honeypot-net
+    environment:
+      - COWRIE_HOSTNAME=sma-inverter-01
+    mem_limit: 256m
+
+  # ----------------------------------------------------------
+  # 2. Broker MQTT — Mosquitto con logging activado
+  # Puerto 1883 expuesto para tráfico no cifrado del honeypot
+  # ----------------------------------------------------------
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: honeypot-mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./honeypot/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./honeypot/capturas/mqtt:/mosquitto/log
+    networks:
+      - honeypot-net
+    mem_limit: 128m
+
+  # ----------------------------------------------------------
+  # 3. Servidor Modbus TCP señuelo — PyModbus (script Python)
+  # Puerto 502 expuesto. Lee registros de la simulación FV.
+  # ----------------------------------------------------------
+  modbus:
+    build:
+      context: ./honeypot/modbus
+      dockerfile: Dockerfile
+    container_name: honeypot-modbus
+    restart: unless-stopped
+    ports:
+      - "502:502"
+    volumes:
+      - ./honeypot/capturas/modbus:/app/logs
+    networks:
+      - honeypot-net
+    depends_on:
+      - simulacion-fv
+    mem_limit: 128m
+
+  # ----------------------------------------------------------
+  # 4. Módulo de simulación FV
+  # Genera telemetría del inversor y la publica en MQTT/Modbus
+  # No expone puertos al exterior directamente
+  # ----------------------------------------------------------
+  simulacion-fv:
+    build:
+      context: ./simulacion_fv
+      dockerfile: Dockerfile
+    container_name: simulacion-fv
+    restart: unless-stopped
+    volumes:
+      - ./simulacion_fv/datasets_irradiancia:/app/datos_irradiancia:ro
+    networks:
+      - honeypot-net
+    depends_on:
+      - mosquitto
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+      - MQTT_TOPIC=solar/inversor1/telemetry
+      - LATITUD=11.2408
+      - LONGITUD=-74.2106
+      - INTERVALO_S=5
+    mem_limit: 128m
+
+  # ----------------------------------------------------------
+  # 5. Captura de red — tcpdump
+  # Captura todo el tráfico de la red del honeypot en PCAP
+  # ----------------------------------------------------------
+  tcpdump:
+    image: nicolaka/netshoot:latest
+    container_name: captura-red
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./honeypot/capturas/pcap:/capturas
+    command: >
+      tcpdump -i eth0
+        -w /capturas/captura_%Y%m%d_%H%M%S.pcap
+        -G 3600
+        -z gzip
+        port 22 or port 502 or port 1883 or port 80
+    mem_limit: 64m
+
+  # ----------------------------------------------------------
+  # 6. Base de datos — SQLite vía volumen compartido
+  # (migración a PostgreSQL en fase avanzada, ver comentario)
+  # ----------------------------------------------------------
+  # postgresql:
+  #   image: postgres:16-alpine
+  #   container_name: honeypot-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_DB: honeypot
+  #     POSTGRES_USER: honeypot
+  #     POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - honeypot-net
+  #   mem_limit: 256m
+
+  # ----------------------------------------------------------
+  # 7. Dashboard — Streamlit (fase inicial)
+  # ----------------------------------------------------------
+  dashboard:
+    build:
+      context: ./dashboard/streamlit
+      dockerfile: Dockerfile
+    container_name: dashboard
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./datos:/app/datos:ro
+      - ./ml/modelos:/app/modelos:ro
+    networks:
+      - honeypot-net
+    depends_on:
+      - cowrie
+      - modbus
+      - mosquitto
+    mem_limit: 256m
+
+# ------------------------------------------------------------
+# Red interna del sistema (bridge)
+# ------------------------------------------------------------
+networks:
+  honeypot-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+# ------------------------------------------------------------
+# Volúmenes persistentes
+# ------------------------------------------------------------
+volumes:
+  postgres_data:

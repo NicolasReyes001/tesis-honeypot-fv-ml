@@ -1,0 +1,69 @@
+# ============================================================
+# Dependencias Python del proyecto
+# Honeypot para Sistemas Fotovoltaicos con Detección por ML
+# Universidad Santo Tomás — Ingeniería Electrónica
+#
+# Instalación completa:
+#   pip install -r requirements.txt
+#
+# En Raspberry Pi 4 (Python del sistema):
+#   pip install -r requirements.txt --break-system-packages
+# ============================================================
+
+# ------------------------------------------------------------
+# Honeypot — servidor Modbus TCP señuelo
+# ------------------------------------------------------------
+pymodbus==3.6.9
+
+# ------------------------------------------------------------
+# Simulación FV — publicador MQTT
+# ------------------------------------------------------------
+paho-mqtt==2.1.0
+
+# ------------------------------------------------------------
+# Simulación FV — datos de irradiancia NASA POWER
+# ------------------------------------------------------------
+requests==2.32.3
+
+# ------------------------------------------------------------
+# Simulación FV — modelo matemático del inversor
+# ------------------------------------------------------------
+numpy==1.26.4
+scipy==1.13.1
+
+# ------------------------------------------------------------
+# Pipeline de datos — procesamiento de logs y PCAP
+# ------------------------------------------------------------
+pandas==2.2.2
+scapy==2.5.0
+
+# ------------------------------------------------------------
+# Machine Learning — clasificador Random Forest
+# ------------------------------------------------------------
+scikit-learn==1.5.1
+imbalanced-learn==0.12.3
+joblib==1.4.2
+
+# ------------------------------------------------------------
+# Machine Learning — notebooks de exploración
+# ------------------------------------------------------------
+jupyter==1.0.0
+matplotlib==3.9.1
+seaborn==0.13.2
+
+# ------------------------------------------------------------
+# Base de datos
+# ------------------------------------------------------------
+# SQLite: incluido en Python stdlib, no requiere paquete
+# PostgreSQL (migración fase avanzada):
+# psycopg2-binary==2.9.9
+
+# ------------------------------------------------------------
+# Dashboard — fase inicial
+# ------------------------------------------------------------
+streamlit==1.36.0
+
+# ------------------------------------------------------------
+# Utilidades generales
+# ------------------------------------------------------------
+python-dotenv==1.0.1
