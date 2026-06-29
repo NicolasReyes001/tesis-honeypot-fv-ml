@@ -1,4 +1,4 @@
-# recursos/ — Recursos compartidos del proyecto
+# assets/ — Recursos compartidos del proyecto
 
 Esta carpeta almacena recursos gráficos y visuales que son usados en múltiples partes del proyecto: en el documento de tesis, en presentaciones, en el README del repositorio y en los documentos de metodología.
 
