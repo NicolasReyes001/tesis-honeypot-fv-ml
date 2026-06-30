@@ -23,6 +23,7 @@
 | 0.2 | 30/06/2026 | Definición de areas de conocimientos del proyecto. |
 | 0.3 | 30/06/2026 | Definición de areas de investigación del proyecto. |
 | 0.4 | 30/06/2026 | Definición de Campo de aplicación del proyecto. |
+| 0.5 | 30/06/2026 | Definición del tipo de investigación del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -34,7 +35,7 @@
 | 🟢 Aprobado | 1.2 Área de conocimiento |
 | 🟢 Aprobado | 1.3 Línea de investigación |
 | 🟢 Aprobado | 1.4 Campo de aplicación |
-| ⚪ Pendiente | 1.5 Tipo de investigación |
+| 🟢 Aprobado | 1.5 Tipo de investigación |
 | ⚪ Pendiente | 1.6 Enfoque metodológico |
 | ⚪ Pendiente | 1.7 Modalidad del proyecto |
 | ⚪ Pendiente | 1.8 Producto esperado |
@@ -142,3 +143,41 @@ El campo de aplicación delimita el entorno donde se implementará y evaluará l
 ### Referencias de respaldo
 
 > Se incorporarán durante el desarrollo del estado del arte y del marco teórico mediante literatura científica especializada y documentación técnica del sector energético y de ciberseguridad industrial.
+
+
+## 1.5 Tipo de investigación
+
+### Decisión
+
+**Finalidad**
+
+- Investigación aplicada.
+
+**Alcance**
+
+- Descriptivo.
+
+**Estrategia de validación**
+
+- Validación experimental mediante la implementación y evaluación de un entorno de simulación que integra un honeypot inteligente para infraestructuras fotovoltaicas.
+
+### Criterio de selección
+
+Se seleccionó una investigación aplicada debido a que el objetivo principal consiste en desarrollar, implementar y validar una solución tecnológica orientada a resolver un problema específico de ciberseguridad en infraestructuras fotovoltaicas, en lugar de generar nuevo conocimiento teórico.
+
+### Justificación
+
+La investigación es de carácter aplicado porque busca desarrollar e implementar una solución tecnológica para la detección de amenazas cibernéticas en infraestructuras fotovoltaicas mediante técnicas de aprendizaje automático. El alcance es predominantemente descriptivo, ya que pretende caracterizar el comportamiento del sistema propuesto y evaluar su desempeño frente a diferentes escenarios de ataque. La validación se realizará mediante experimentación controlada, permitiendo analizar el funcionamiento del honeypot, la capacidad de detección del modelo de aprendizaje automático y las métricas obtenidas durante las pruebas.
+
+### Estado
+
+🟢 Aprobado
+
+### Observaciones
+
+La clasificación metodológica podrá ampliarse posteriormente en el capítulo de metodología, donde se describirán en detalle el diseño experimental, las variables evaluadas, los escenarios de prueba y las métricas utilizadas para validar el sistema.
+
+### Referencias de respaldo
+
+- Hernández Sampieri, R., Fernández Collado, C., & Baptista Lucio, P. *Metodología de la Investigación*. McGraw-Hill.
+- Bernal, C. A. *Metodología de la Investigación: Administración, Economía, Humanidades y Ciencias Sociales*.
