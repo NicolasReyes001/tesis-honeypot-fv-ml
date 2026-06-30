@@ -29,6 +29,7 @@
 | 0.8 | 30/06/2026 | Definición del Nivel de Madurez Tecnológica (TRL) del proyecto. |
 | 0.9 | 30/06/2026 | Definición de los Producto esperado del proyecto. |
 | 0.10 | 30/06/2026 | Definición de las Tecnologías principales del proyecto. |
+| 0.11 | 30/06/2026 | Definición de las Palabras clave del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -45,7 +46,7 @@
 | 🟢 Aprobado | 1.7 Modalidad del proyecto |
 | 🟢 Aprobado | 1.8 Producto esperado |
 | 🟢 Aprobado | 1.9 Tecnologías principales |
-| ⚪ Pendiente | 1.10 Palabras clave |
+| 🟢 Aprobado | 1.10 Palabras clave |
 | 🟢 Aprobado | 1.11 Nivel de Madurez Tecnológica (TRL) |
 
 
@@ -321,6 +322,34 @@ Las versiones específicas y las configuraciones detalladas de cada herramienta 
 - Documentación oficial de Grafana.
 - Documentación oficial de Streamlit.
   
+## 1.10 Palabras clave
+
+### Decisión
+
+Las palabras clave fueron seleccionadas considerando los principales conceptos científicos, tecnológicos y de aplicación abordados en la investigación, procurando mantener coherencia con la terminología utilizada en la literatura especializada y en publicaciones indexadas.
+
+### Palabras clave
+
+- Cybersecurity
+- Honeypot
+- Machine Learning
+- Photovoltaic Systems
+- Industrial Control Systems (ICS)
+- Industrial Internet of Things (IIoT)
+- Threat Detection
+- Smart Energy Systems
+
+### Criterio de selección
+
+Las palabras clave representan el problema de investigación, la tecnología desarrollada, el dominio de aplicación y las metodologías empleadas, facilitando la identificación e indexación del trabajo en bases de datos académicas nacionales e internacionales.
+
+### Estado
+
+🟢 Aprobado
+
+### Referencias de respaldo
+
+Las palabras clave se seleccionaron con base en la terminología predominante utilizada en publicaciones científicas de IEEE, Springer, Elsevier y otras fuentes especializadas en ciberseguridad industrial, aprendizaje automático e infraestructuras energéticas inteligentes.
 
 ## 1.11 Nivel de Madurez Tecnológica (TRL)
 
