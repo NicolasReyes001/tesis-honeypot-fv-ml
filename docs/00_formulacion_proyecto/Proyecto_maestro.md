@@ -27,6 +27,7 @@
 | 0.6 | 30/06/2026 | Definición del Enfoque metodológico del proyecto. |
 | 0.7 | 30/06/2026 | Definición de la Modalidad del proyecto del proyecto. |
 | 0.8 | 30/06/2026 | Definición del Nivel de Madurez Tecnológica (TRL) del proyecto. |
+| 0.9 | 30/06/2026 | Definición de los Producto esperado del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -41,7 +42,7 @@
 | 🟢 Aprobado | 1.5 Tipo de investigación |
 | 🟢 Aprobado | 1.6 Enfoque metodológico |
 | 🟢 Aprobado | 1.7 Modalidad del proyecto |
-| ⚪ Pendiente | 1.8 Producto esperado |
+| 🟢 Aprobado | 1.8 Producto esperado |
 | ⚪ Pendiente | 1.9 Tecnologías principales |
 | ⚪ Pendiente | 1.10 Palabras clave |
 | 🟢 Aprobado | 1.11 Nivel de Madurez Tecnológica (TRL) |
@@ -241,6 +242,42 @@ La validación experimental permitirá comprobar el funcionamiento del sistema p
 
 - Hernández Sampieri, R., Fernández Collado, C., & Baptista Lucio, P. *Metodología de la Investigación*. McGraw-Hill.
 - Organización para la Cooperación y el Desarrollo Económicos (OCDE). *Manual de Frascati 2015: Guidelines for Collecting and Reporting Data on Research and Experimental Development*. OECD Publishing.
+
+## 1.8 Productos esperados
+
+### Producto principal
+
+El principal resultado del proyecto será el desarrollo de un honeypot inteligente para la detección de amenazas cibernéticas en infraestructuras fotovoltaicas, capaz de capturar eventos de seguridad, analizar patrones de ataque mediante técnicas de aprendizaje automático y operar en un entorno de simulación representativo, alcanzando un nivel de madurez tecnológica equivalente a TRL 5.
+
+### Productos complementarios
+
+Como resultado del desarrollo de la investigación se obtendrán los siguientes productos complementarios:
+
+- Arquitectura de referencia para la integración del honeypot en infraestructuras fotovoltaicas.
+- Entorno de simulación de una planta fotovoltaica con protocolos industriales (Modbus TCP y MQTT).
+- Modelo de aprendizaje automático entrenado y evaluado para la detección de amenazas.
+- Dashboard para la supervisión y visualización de eventos de seguridad.
+- Dataset generado durante la experimentación y validación del sistema.
+- Repositorio de software completamente documentado y versionado.
+- Documentación técnica del sistema desarrollado.
+- Documento final de tesis con los resultados de la investigación.
+
+### Criterio de selección
+
+Los productos esperados fueron definidos de manera que cubran tanto los resultados tecnológicos como los científicos y documentales del proyecto. Esta estructura garantiza que la investigación produzca un prototipo funcional, evidencia experimental reproducible y documentación suficiente para facilitar la validación, la transferencia de conocimiento y la continuidad del desarrollo.
+
+### Estado
+
+🟢 Aprobado
+
+### Observaciones
+
+Los productos complementarios serán desarrollados progresivamente durante las diferentes fases del proyecto y servirán como evidencia del cumplimiento de los objetivos específicos y del nivel de madurez tecnológica establecido.
+
+### Referencias de respaldo
+
+- Manual de Frascati 2015 (OCDE).
+- IEEE Std 1471 / ISO/IEC/IEEE 42010 (para arquitectura de sistemas).
 
 
 ## 1.11 Nivel de Madurez Tecnológica (TRL)
