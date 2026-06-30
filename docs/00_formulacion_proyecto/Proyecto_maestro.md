@@ -21,6 +21,7 @@
 |----------|--------|-------------|
 | 0.1 | 30/06/2026 | Creación del Proyecto Maestro y definición del título del proyecto. |
 | 0.2 | 30/06/2026 | Definición de areas de conocimientos del proyecto. |
+| 0.3 | 30/06/2026 | Definición de areas de investigación del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -98,3 +99,22 @@ El carácter interdisciplinario del proyecto deberá reflejarse posteriormente e
 
 > Se incorporarán durante el desarrollo del estado del arte y el marco teórico mediante literatura científica y documentación técnica especializada.
 
+## 1.3 Línea de investigación
+
+### Decisión
+
+El proyecto se enmarca dentro de la línea de investigación institucional relacionada con **Automática y Sistemas Inteligentes**, integrando además componentes de sistemas de energía eléctrica, ciberseguridad industrial y aprendizaje automático para el desarrollo de una solución aplicada a infraestructuras fotovoltaicas.
+
+### Justificación
+
+La propuesta consiste en el diseño e implementación de un sistema inteligente capaz de capturar y analizar eventos de ciberseguridad en una infraestructura fotovoltaica simulada. Aunque el contexto de aplicación corresponde al sector energético, el eje central de la investigación es el desarrollo de un sistema electrónico inteligente que integra técnicas de automatización, monitoreo y aprendizaje automático para la detección de amenazas cibernéticas.
+
+Esta orientación es coherente con las líneas de investigación desarrolladas por la Facultad de Ingeniería Electrónica de la Universidad Santo Tomás a través de sus grupos de investigación, especialmente aquellas relacionadas con automática, modelado, monitoreo e inteligencia computacional.
+
+### Estado
+
+🟢 Aprobado
+
+### Observaciones
+
+La línea de investigación podrá ajustarse posteriormente para coincidir exactamente con la denominación utilizada por el grupo de investigación o el director del proyecto, sin modificar el alcance científico de la investigación.
