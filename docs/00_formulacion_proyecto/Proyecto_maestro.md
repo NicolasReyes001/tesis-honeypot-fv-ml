@@ -1,5 +1,7 @@
 # Proyecto Maestro
 
+## Sección 1
+
 ## Información del documento
 
 | Campo | Valor |
@@ -369,3 +371,25 @@ El proyecto tiene como objetivo desarrollar un prototipo funcional de un honeypo
 
 - NASA. *Technology Readiness Level (TRL)*.
 - European Commission. *Technology Readiness Levels (TRL)*.
+
+## Sección 2, Formulación del Problema.
+
+## 2.1 Contexto de la investigación.
+
+## 2.2 Planteamiento del problema.
+
+## 2.3 Pregunta de investigación.
+
+## 2.4 Justificación.
+
+## 2.5 Objetivo general.
+
+## 2.6 Objetivos específicos.
+
+## 2.7 Alcance.
+
+## 2.8 Delimitaciones.
+
+## 2.9 Hipótesis (si aplica).
+
+## 2.10 Variables de investigación.
