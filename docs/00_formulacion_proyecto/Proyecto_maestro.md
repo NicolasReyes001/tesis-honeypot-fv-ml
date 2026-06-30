@@ -28,6 +28,7 @@
 | 0.7 | 30/06/2026 | Definición de la Modalidad del proyecto del proyecto. |
 | 0.8 | 30/06/2026 | Definición del Nivel de Madurez Tecnológica (TRL) del proyecto. |
 | 0.9 | 30/06/2026 | Definición de los Producto esperado del proyecto. |
+| 0.10 | 30/06/2026 | Definición de las Tecnologías principales del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -43,7 +44,7 @@
 | 🟢 Aprobado | 1.6 Enfoque metodológico |
 | 🟢 Aprobado | 1.7 Modalidad del proyecto |
 | 🟢 Aprobado | 1.8 Producto esperado |
-| ⚪ Pendiente | 1.9 Tecnologías principales |
+| 🟢 Aprobado | 1.9 Tecnologías principales |
 | ⚪ Pendiente | 1.10 Palabras clave |
 | 🟢 Aprobado | 1.11 Nivel de Madurez Tecnológica (TRL) |
 
@@ -279,6 +280,47 @@ Los productos complementarios serán desarrollados progresivamente durante las d
 - Manual de Frascati 2015 (OCDE).
 - IEEE Std 1471 / ISO/IEC/IEEE 42010 (para arquitectura de sistemas).
 
+
+## 1.9 Tecnologías principales
+
+### Decisión
+
+El desarrollo del proyecto se fundamenta en un ecosistema de tecnologías de código abierto orientadas a la simulación de infraestructuras industriales, la ciberseguridad, el aprendizaje automático y la ingeniería de software, seleccionadas por su amplia adopción en entornos académicos e industriales, su interoperatividad y su capacidad para facilitar la reproducibilidad de los experimentos.
+
+### Tecnologías principales
+
+| Categoría | Tecnologías |
+|-----------|-------------|
+| Lenguaje de programación | Python |
+| Contenedorización | Docker, Docker Compose |
+| Protocolos industriales | Modbus TCP, MQTT |
+| Honeypot | Frameworks de honeypot especializados para servicios industriales |
+| Aprendizaje automático | Bibliotecas de Machine Learning para Python |
+| Visualización | Grafana, Streamlit |
+| Control de versiones | Git |
+| Documentación | LaTeX, BibTeX |
+
+### Criterio de selección
+
+Las tecnologías fueron seleccionadas considerando criterios de interoperatividad, disponibilidad de documentación técnica, soporte de la comunidad, facilidad de integración, reproducibilidad experimental y adopción en proyectos de ciberseguridad industrial e Internet Industrial de las Cosas (IIoT).
+
+### Estado
+
+🟢 Aprobado
+
+### Observaciones
+
+Las versiones específicas y las configuraciones detalladas de cada herramienta serán documentadas durante la fase de diseño e implementación del sistema.
+
+### Referencias de respaldo
+
+- Documentación oficial de Docker.
+- Documentación oficial de Python.
+- Especificación Modbus Application Protocol.
+- Especificación MQTT OASIS.
+- Documentación oficial de Grafana.
+- Documentación oficial de Streamlit.
+  
 
 ## 1.11 Nivel de Madurez Tecnológica (TRL)
 
