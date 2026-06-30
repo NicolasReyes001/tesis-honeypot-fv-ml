@@ -22,6 +22,7 @@
 | 0.1 | 30/06/2026 | Creación del Proyecto Maestro y definición del título del proyecto. |
 | 0.2 | 30/06/2026 | Definición de areas de conocimientos del proyecto. |
 | 0.3 | 30/06/2026 | Definición de areas de investigación del proyecto. |
+| 0.4 | 30/06/2026 | Definición de Campo de aplicación del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -31,8 +32,8 @@
 |---------|----------|
 | 🟢 Aprobado | 1.1 Título del proyecto |
 | 🟢 Aprobado | 1.2 Área de conocimiento |
-| ⚪ Pendiente | 1.3 Línea de investigación |
-| ⚪ Pendiente | 1.4 Campo de aplicación |
+| 🟢 Aprobado | 1.3 Línea de investigación |
+| 🟢 Aprobado | 1.4 Campo de aplicación |
 | ⚪ Pendiente | 1.5 Tipo de investigación |
 | ⚪ Pendiente | 1.6 Enfoque metodológico |
 | ⚪ Pendiente | 1.7 Modalidad del proyecto |
@@ -118,3 +119,26 @@ Esta orientación es coherente con las líneas de investigación desarrolladas p
 ### Observaciones
 
 La línea de investigación podrá ajustarse posteriormente para coincidir exactamente con la denominación utilizada por el grupo de investigación o el director del proyecto, sin modificar el alcance científico de la investigación.
+
+
+## 1.4 Campo de aplicación
+
+### Decisión
+
+El proyecto se orienta al campo de la ciberseguridad aplicada a infraestructuras fotovoltaicas inteligentes, específicamente aquellas que integran sistemas de supervisión, monitoreo y comunicaciones industriales para la operación de plantas de generación fotovoltaica.
+
+### Justificación
+
+La transformación digital del sector energético ha impulsado la incorporación de tecnologías de automatización, monitoreo remoto y protocolos de comunicación industrial en las infraestructuras fotovoltaicas. Esta evolución tecnológica incrementa la superficie de ataque frente a amenazas cibernéticas, haciendo necesario el desarrollo de mecanismos especializados que permitan estudiar, detectar y analizar este tipo de ataques en un entorno controlado. En este contexto, el honeypot inteligente propuesto constituye una herramienta de investigación orientada al análisis de amenazas cibernéticas en sistemas fotovoltaicos.
+
+### Estado
+
+🟢 Aprobado
+
+### Observaciones
+
+El campo de aplicación delimita el entorno donde se implementará y evaluará la solución propuesta. No restringe la posibilidad de adaptar la arquitectura desarrollada a otras infraestructuras industriales en trabajos futuros.
+
+### Referencias de respaldo
+
+> Se incorporarán durante el desarrollo del estado del arte y del marco teórico mediante literatura científica especializada y documentación técnica del sector energético y de ciberseguridad industrial.
