@@ -25,6 +25,7 @@
 | 0.4 | 30/06/2026 | Definición de Campo de aplicación del proyecto. |
 | 0.5 | 30/06/2026 | Definición del tipo de investigación del proyecto. |
 | 0.6 | 30/06/2026 | Definición del Enfoque metodológico del proyecto. |
+| 0.7 | 30/06/2026 | Definición de la Modalidad del proyecto del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -38,7 +39,7 @@
 | 🟢 Aprobado | 1.4 Campo de aplicación |
 | 🟢 Aprobado | 1.5 Tipo de investigación |
 | 🟢 Aprobado | 1.6 Enfoque metodológico |
-| ⚪ Pendiente | 1.7 Modalidad del proyecto |
+| 🟢 Aprobado | 1.7 Modalidad del proyecto |
 | ⚪ Pendiente | 1.8 Producto esperado |
 | ⚪ Pendiente | 1.9 Tecnologías principales |
 | ⚪ Pendiente | 1.10 Palabras clave |
@@ -210,3 +211,31 @@ La descripción detallada de las variables, indicadores, métricas y procedimien
 
 - Hernández Sampieri, R., Fernández Collado, C., & Baptista Lucio, P. *Metodología de la Investigación*. McGraw-Hill.
 - Bernal, C. A. *Metodología de la Investigación: Administración, Economía, Humanidades y Ciencias Sociales*.
+
+
+## 1.7 Modalidad del proyecto
+
+### Decisión
+
+El trabajo de grado se desarrolla bajo la modalidad de desarrollo tecnológico con validación experimental, orientado al diseño, implementación e integración de un honeypot inteligente para la detección de amenazas cibernéticas en infraestructuras fotovoltaicas mediante técnicas de aprendizaje automático.
+
+### Criterio de selección
+
+Se selecciona esta modalidad debido a que el proyecto tiene como propósito principal desarrollar una solución tecnológica funcional que integre diferentes componentes de software y simulación para resolver un problema específico de ciberseguridad. La solución será implementada y posteriormente evaluada mediante escenarios experimentales controlados que permitan verificar su desempeño.
+
+### Justificación
+
+El proyecto comprende el diseño de la arquitectura del sistema, la implementación de un entorno de simulación de una infraestructura fotovoltaica, el desarrollo de un honeypot especializado, la integración de técnicas de aprendizaje automático y la evaluación del desempeño del sistema mediante pruebas experimentales. Estas actividades corresponden a un proceso de desarrollo tecnológico cuyo resultado será un prototipo funcional validado experimentalmente.
+
+### Estado
+
+🟢 Aprobado
+
+### Observaciones
+
+La validación experimental permitirá comprobar el funcionamiento del sistema propuesto mediante métricas objetivas y escenarios de prueba definidos en el diseño experimental.
+
+### Referencias de respaldo
+
+- Hernández Sampieri, R., Fernández Collado, C., & Baptista Lucio, P. *Metodología de la Investigación*. McGraw-Hill.
+- Organización para la Cooperación y el Desarrollo Económicos (OCDE). *Manual de Frascati 2015: Guidelines for Collecting and Reporting Data on Research and Experimental Development*. OECD Publishing.
