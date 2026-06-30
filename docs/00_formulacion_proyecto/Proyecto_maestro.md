@@ -26,6 +26,7 @@
 | 0.5 | 30/06/2026 | Definición del tipo de investigación del proyecto. |
 | 0.6 | 30/06/2026 | Definición del Enfoque metodológico del proyecto. |
 | 0.7 | 30/06/2026 | Definición de la Modalidad del proyecto del proyecto. |
+| 0.8 | 30/06/2026 | Definición del Nivel de Madurez Tecnológica (TRL) del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -43,6 +44,7 @@
 | ⚪ Pendiente | 1.8 Producto esperado |
 | ⚪ Pendiente | 1.9 Tecnologías principales |
 | ⚪ Pendiente | 1.10 Palabras clave |
+| 🟢 Aprobado | 1.11 Nivel de Madurez Tecnológica (TRL) |
 
 
 
@@ -239,3 +241,23 @@ La validación experimental permitirá comprobar el funcionamiento del sistema p
 
 - Hernández Sampieri, R., Fernández Collado, C., & Baptista Lucio, P. *Metodología de la Investigación*. McGraw-Hill.
 - Organización para la Cooperación y el Desarrollo Económicos (OCDE). *Manual de Frascati 2015: Guidelines for Collecting and Reporting Data on Research and Experimental Development*. OECD Publishing.
+
+
+## 1.11 Nivel de Madurez Tecnológica (TRL)
+
+### Nivel objetivo
+
+**TRL 5 – Tecnología validada en un entorno relevante.**
+
+### Justificación
+
+El proyecto tiene como objetivo desarrollar un prototipo funcional de un honeypot inteligente para infraestructuras fotovoltaicas, integrando un entorno de simulación representativo, protocolos industriales, técnicas de aprendizaje automático y mecanismos de monitoreo. La validación se realizará mediante escenarios experimentales controlados que reproducen condiciones relevantes de operación, sin llegar a una implementación en una infraestructura fotovoltaica real.
+
+### Estado
+
+🟢 Aprobado
+
+### Referencias
+
+- NASA. *Technology Readiness Level (TRL)*.
+- European Commission. *Technology Readiness Levels (TRL)*.
