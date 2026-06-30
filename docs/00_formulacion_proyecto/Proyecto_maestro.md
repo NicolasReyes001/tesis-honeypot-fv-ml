@@ -24,6 +24,7 @@
 | 0.3 | 30/06/2026 | Definición de areas de investigación del proyecto. |
 | 0.4 | 30/06/2026 | Definición de Campo de aplicación del proyecto. |
 | 0.5 | 30/06/2026 | Definición del tipo de investigación del proyecto. |
+| 0.6 | 30/06/2026 | Definición del Enfoque metodológico del proyecto. |
 
 # 1. Identidad del Proyecto
 
@@ -36,7 +37,7 @@
 | 🟢 Aprobado | 1.3 Línea de investigación |
 | 🟢 Aprobado | 1.4 Campo de aplicación |
 | 🟢 Aprobado | 1.5 Tipo de investigación |
-| ⚪ Pendiente | 1.6 Enfoque metodológico |
+| 🟢 Aprobado | 1.6 Enfoque metodológico |
 | ⚪ Pendiente | 1.7 Modalidad del proyecto |
 | ⚪ Pendiente | 1.8 Producto esperado |
 | ⚪ Pendiente | 1.9 Tecnologías principales |
@@ -176,6 +177,34 @@ La investigación es de carácter aplicado porque busca desarrollar e implementa
 ### Observaciones
 
 La clasificación metodológica podrá ampliarse posteriormente en el capítulo de metodología, donde se describirán en detalle el diseño experimental, las variables evaluadas, los escenarios de prueba y las métricas utilizadas para validar el sistema.
+
+### Referencias de respaldo
+
+- Hernández Sampieri, R., Fernández Collado, C., & Baptista Lucio, P. *Metodología de la Investigación*. McGraw-Hill.
+- Bernal, C. A. *Metodología de la Investigación: Administración, Economía, Humanidades y Ciencias Sociales*.
+
+
+## 1.6 Enfoque metodológico
+
+### Decisión
+
+El proyecto adopta un enfoque metodológico cuantitativo, sustentado en la recolección, medición y análisis de datos obtenidos mediante experimentación controlada sobre un entorno de simulación que integra un honeypot inteligente para infraestructuras fotovoltaicas.
+
+### Criterio de selección
+
+Se seleccionó el enfoque cuantitativo debido a que la investigación evalúa el desempeño de la solución propuesta a partir de variables objetivas y medibles. Los resultados serán obtenidos mediante pruebas experimentales y analizados utilizando métricas de desempeño ampliamente aceptadas en ciberseguridad y aprendizaje automático, garantizando la reproducibilidad de los experimentos y la objetividad en la interpretación de los resultados.
+
+### Justificación
+
+Durante el desarrollo del proyecto se recopilarán datos relacionados con los eventos capturados por el honeypot, el comportamiento de la infraestructura fotovoltaica simulada y el desempeño del modelo de aprendizaje automático. Estos datos serán analizados mediante indicadores cuantitativos como precisión (Precision), exhaustividad (Recall), F1-Score, exactitud (Accuracy), tiempo de respuesta, tasa de detección y consumo de recursos computacionales. En consecuencia, el enfoque cuantitativo resulta el más adecuado para evaluar el cumplimiento de los objetivos planteados.
+
+### Estado
+
+🟢 Aprobado
+
+### Observaciones
+
+La descripción detallada de las variables, indicadores, métricas y procedimientos estadísticos será desarrollada en el capítulo de metodología y en el diseño experimental del proyecto.
 
 ### Referencias de respaldo
 
