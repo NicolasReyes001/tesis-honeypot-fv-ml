@@ -1,0 +1,18 @@
+# Dependencias específicas para la simulación fotovoltaica
+# Separadas del requirements.txt raíz para mantener el entorno desacoplado
+
+# Cálculo numérico y resolución de ecuaciones
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Manejo de datos y series temporales
+pandas>=2.0.0
+
+# Visualización de resultados
+matplotlib>=3.7.0
+
+# Consumo de API de NASA POWER
+requests>=2.28.0
+
+# Manejo de archivos de configuración
+pyyaml>=6.0

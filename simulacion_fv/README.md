@@ -8,10 +8,16 @@ Este módulo genera telemetría continua y físicamente coherente de una planta 
 
 ```
 simulacion_fv/
-├── inversor_modbus/        # Modelo eléctrico del inversor + servidor Modbus
-├── mqtt_gateway/           # Publicador MQTT de telemetría FV
-├── datasets_irradiancia/   # Datos históricos de irradiancia solar (NASA POWER)
-└── pruebas/                # Scripts de validación física del modelo
+├── datasets_irradiancia/ # Fase 1: Adquisición y procesamiento de datos ambientales
+├── planta/ # Fase 2: Modelo matemático del panel (diodo único)
+├── inversor/ # Fase 3: Algoritmo MPPT
+├── sensores/ # Fase 4: Interfaz para hardware real (preparado, no usado aún)
+├── pruebas/ # Fase 5: Pruebas unitarias y validación
+├── modbus/ # Reservado para integración futura con honeypot
+├── mqtt/ # Reservado para integración futura con honeypot
+├── mqtt_gateway/ # Reservado para integración futura con honeypot
+├── inversor_modbus/ # Reservado para integración futura con honeypot
+└── gateway/ # Reservado para integración futura con honeypot
 ```
 
 ---
@@ -102,7 +108,17 @@ Los scripts en `pruebas/` verifican que los valores generados cumplan las restri
 - La corriente DC cae a cero cuando `estado_inversor = OFFLINE`.
 - La energía diaria acumulada es monótonamente creciente durante horas de luz solar.
 
----
+## Instalación
+
+```bash
+# Crear entorno virtual (si no lo has hecho)
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# Instalar dependencias de simulación
+pip install -r requirements-simulacion.txt
+
+```
 
 ## Ejecución
 

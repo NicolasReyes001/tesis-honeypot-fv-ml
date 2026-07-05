@@ -183,3 +183,38 @@ Este diseño conecta directamente todos los componentes definidos hasta el momen
 El diseño del dataset realizado en este documento establece la estructura fundamental sobre la cual se construirá el clasificador del proyecto, manteniendo consistencia absoluta con las siete clases oficiales definidas desde la Semana 1 y confirmadas en el Día 3 de esta semana: Normal, Escaneo, Fuerza bruta/Intrusión SSH, Manipulación Modbus/MQTT (que incorpora la evidencia de ataques MITM), DoS/DDoS, Replay Attack y FDIA. Las variables seleccionadas incorporan simultáneamente evidencia de red, comportamiento de protocolo industrial y coherencia física del proceso fotovoltaico simulado, lo cual constituye uno de los elementos diferenciadores del proyecto frente a los honeypots genéricos identificados durante la revisión del estado del arte, ya que el modelo no dependerá únicamente de patrones de tráfico, sino también de información derivada del comportamiento energético simulado.
 
 Asimismo, el análisis confirma que la estructura propuesta es totalmente compatible con el algoritmo Random Forest seleccionado durante los Días 4 y 5, cerrando así la fase de fundamentación metodológica de Machine Learning de la Semana 2 e iniciando la transición hacia la etapa de diseño e implementación del honeypot que se desarrollará durante la Semana 3.
+
+
+## Resolución temporal de la simulación fotovoltaica
+
+### Ventana temporal
+
+- **Periodo inicial de validación**: 21 de marzo de 2023 (un día completo)
+- **Justificación**: Día cercano al equinoccio, con duración solar balanceada (~12h en Bogotá, latitud 4.6°N). Permite validar el modelo sin sesgos estacionales extremos.
+- **Escalamiento futuro**: Una vez validado el pipeline, se extenderá a un año completo (ej. 2023-01-01 a 2023-12-31) para la fase de machine learning.
+
+### Resolución temporal
+
+- **Resolución elegida**: 5 minutos (288 puntos por día)
+- **Justificación**:
+  - Balance entre realismo y volumen de datos manejable.
+  - Suficiente para capturar la dinámica de nubosidad (los cambios de irradiancia por nubes típicamente ocurren en escalas de 1-10 minutos).
+  - Permite ejecutar el modelo del diodo único 288 veces por día en segundos, facilitando iteraciones rápidas durante la validación.
+- **Alternativa considerada**: 1 minuto (1440 puntos/día), descartada por generar 5× más datos sin ganancia significativa en realismo para esta etapa.
+
+### Implicaciones para el dataset
+
+| Escala | Puntos totales | Uso |
+|---|---|---|
+| 1 día (5 min) | 288 | Validación del modelo, pruebas unitarias, gráficas de tesis |
+| 1 mes (5 min) | ~8,640 | Análisis de patrones mensuales |
+| 1 año (5 min) | ~105,120 | Entrenamiento de modelos ML, análisis estacional |
+
+### Coordenadas geográficas de referencia
+
+- **Ubicación**: Bogotá, Colombia
+- **Latitud**: 4.6097° N
+- **Longitud**: 74.0817° W
+- **Altitud**: ~2,650 m s.n.m.
+
+> **Nota**: Estas coordenadas se usarán en la Fase 1 (Paso 4) para consultar la API de NASA POWER.

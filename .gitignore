@@ -8,7 +8,8 @@
 # contener IPs reales de atacantes)
 # ------------------------------------------------------------
 datos/raw/
-datos/procesados/
+datos/interim/
+datos/processed/
 datos/etiquetados/
 honeypot/capturas/cowrie/
 honeypot/capturas/modbus/
