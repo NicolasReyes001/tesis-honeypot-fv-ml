@@ -1,5 +1,13 @@
 # script de la adquisición de datos de nasa power.
 
+## activación entorno de desarrollo terminal:
+
+source venv/bin/activate
+
+## ejecución script teminal:
+
+python simulacion_fv/datasets_irradiancia/datos_nasa_power.py
+
 ## rango de fechas horarias aceptadas.
 
 La API de nasa power ofrece datos disponibles desde la fecha del 2001/01/01 hasta datos cercanos a tiempo real, NRT.

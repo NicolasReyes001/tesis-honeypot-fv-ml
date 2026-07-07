@@ -22,8 +22,8 @@ LONGITUD = -74.0801
 # La API recibe datos desde 2001/01/01 y con formato: YYYYMMDD (año, mes, dia).
 # A dia de hoy 2026/07/04 hay datos hasta el 2026/03/30, de ahi en adelante los datos se remplazan por -999.
 # Con la que estamos usando es: 20230321 o lo que es 2023/03/21.
-FECHA_INICIO = "20260328"
-FECHA_FIN = "20260401"
+FECHA_INICIO = "20260320"
+FECHA_FIN = "20260331"
 
 VARIABLES = ["ALLSKY_SFC_SW_DWN", "T2M"]
 
