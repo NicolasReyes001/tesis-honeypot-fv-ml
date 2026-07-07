@@ -49,7 +49,7 @@ La simulación se basa en el **modelo de un diodo** del generador fotovoltaico, 
 
 ### Fuente de datos de irradiancia
 
-Los valores de irradiancia se obtienen de la **API NASA POWER** con datos históricos correspondientes a la ciudad de **Santa Marta, Colombia** (latitud 11.24°N, longitud 74.21°W). Esto garantiza que los valores simulados sean representativos de las condiciones reales de operación en la región y no valores genéricos.
+Los valores de irradiancia se obtienen de la **API NASA POWER** con datos históricos correspondientes a la ciudad de **Bogotá, Colombia** (latitud 4.6400, longitud -74.0800). Esto garantiza que los valores simulados sean representativos de las condiciones reales de operación en la región y no valores genéricos.
 
 ---
 
@@ -79,15 +79,15 @@ Formato del payload (JSON):
 ### Modbus TCP (`inversor_modbus/`)
 Las mismas variables se exponen a través del servidor Modbus TCP señuelo en registros holding mapeados conforme a las especificaciones de equipos de referencia del sector:
 
-| Registro    | Variable          | Escala                       |
-| ----------- | ----------------- | ---------------------------- |
-| 30001       | `v_dc`            | × 10 (entero sin signo)      |
-| 30002       | `i_dc`            | × 100 (entero sin signo)     |
-| 30003       | `p_ac`            | × 1 (entero sin signo, W)    |
-| 30004       | `irradiancia`     | × 1 (entero sin signo, W/m²) |
-| 30005       | `temp_panel`      | × 10 (entero con signo)      |
-| 30006       | `estado_inversor` | 1=ONLINE, 2=FAULT, 0=OFFLINE |
-| 30007–30008 | `energia_diaria`  | × 100 (entero 32 bits, Wh)   |
+| Registro    | Variable          | Escala                         |
+| ----------- | ----------------- | ------------------------------ |
+| 30001       | `v_dc`            | × 10 (entero sin signo)        |
+| 30002       | `i_dc`            | × 100 (entero sin signo)       |
+| 30003       | `p_ac`            | × 1 (entero sin signo, W)      |
+| 30004       | `irradiancia`     | × 1 (entero sin signo, Wh/m^2) |
+| 30005       | `temp_panel`      | × 10 (entero con signo)        |
+| 30006       | `estado_inversor` | 1=ONLINE, 2=FAULT, 0=OFFLINE   |
+| 30007–30008 | `energia_diaria`  | × 100 (entero 32 bits, Wh)     |
 
 ---
 
@@ -132,6 +132,6 @@ python simulacion_fv/inversor_modbus/simulador.py
 # Ejecutar solo el publicador MQTT
 python simulacion_fv/mqtt_gateway/publicador.py
 
-# Descargar datos de irradiancia para Santa Marta
-python simulacion_fv/datasets_irradiancia/descargar_nasa_power.py
+# Descargar datos de irradiancia para Bogotá
+python simulacion_fv/datasets_irradiancia/datos_nasa_power.py
 ```

@@ -1,6 +1,6 @@
 import requests # type: ignore
 import json
-import os
+# import os
 import sys  
 import time
 from datetime import datetime
@@ -8,24 +8,27 @@ from datetime import datetime
 from pathlib import Path
 
 # 1. Ubicamos la raíz del proyecto (tesis-honeypot-fv-ml)
-# __file__ es este script. .resolve().parents[1] sube los niveles necesarios hasta la raíz
-RAIZ_PROYECTO = Path(__file__).resolve().parents[1]
+# __file__ es este script. .resolve().parents[2] sube los niveles necesarios hasta la raíz
+# Linea del terminal para ejecutar el script.
+# python simulacion_fv/datasets_irradiancia/datos_nasa_power.py 
+RAIZ_PROYECTO = Path(__file__).resolve().parents[2]
 
 # 2. Definimos la ruta destino dentro de 'datos/raw/'
 CARPETA_OUTPUTS = RAIZ_PROYECTO / "datos" / "raw" / "outputs_nasa"
 
-LATITUD = 4.64
-LONGITUD = -74.08
+LATITUD = 4.6401
+LONGITUD = -74.0801
 
 # La API recibe datos desde 2001/01/01 y con formato: YYYYMMDD (año, mes, dia).
 # A dia de hoy 2026/07/04 hay datos hasta el 2026/03/30, de ahi en adelante los datos se remplazan por -999.
 # Con la que estamos usando es: 20230321 o lo que es 2023/03/21.
-FECHA_INICIO = "20230321"
-FECHA_FIN = "20230321"
+FECHA_INICIO = "20260328"
+FECHA_FIN = "20260401"
 
 VARIABLES = ["ALLSKY_SFC_SW_DWN", "T2M"]
 
 API_URL = "https://power.larc.nasa.gov/api/temporal/hourly/point"
+
 
 def construir_parametros():
 
@@ -33,6 +36,7 @@ def construir_parametros():
 
     params = {
         "parameters": ",".join(VARIABLES),
+        "time-standard": "LST",
         "community": "RE",
         "latitude": LATITUD,
         "longitude": LONGITUD,
@@ -71,7 +75,13 @@ def ejecutar_peticion(params):
             if response.status_code == 200:
                 print("¡Petición exitosa! Datos recibidos correctamente.")
                 datos = response.json()
+
+                header = datos["header"]
+                print(header["start"])
+                print(header["end"])
+
                 return datos, response
+
             
             # Si el servidor responde pero con un error (ej. 500, 503, 404)
             print(f"[ADVERTENCIA] El servidor respondió con código de error HTTP: {response.status_code}")
@@ -108,9 +118,8 @@ def guardar_json_crudo(datos):
     with open(ruta_completa, "w", encoding="utf-8") as archivo:
         json.dump(datos, archivo, indent=4, ensure_ascii=False)
         
-    print(f"¡Archivo guardado exitosamente en: {ruta_completa}")
+    print(f"¡Archivo guardado exitosamente en: {ruta_completa}!")
     return str(ruta_completa)
-
 
 def guardar_metadatos(response, params):
     print("\n--- [PASO 4] Guardando archivo de metadatos ---")
@@ -119,7 +128,7 @@ def guardar_metadatos(response, params):
         return None
 
     # Definimos el nombre del archivo txt
-    nombre_metadatos = f"metadatos_{FECHA_INICIO}_{FECHA_FIN}.txt"
+    nombre_metadatos = f"metadatos_{LATITUD}_{LONGITUD}_{FECHA_INICIO}_{FECHA_FIN}.txt"
     ruta_completa = CARPETA_OUTPUTS / nombre_metadatos
 
     # Doble seguridad para asegurar que la carpeta exista
@@ -156,8 +165,117 @@ def guardar_metadatos(response, params):
         archivo.write(f"Tipo de contenido: {response.headers.get('Content-Type', 'Desconocido')}\n")
         archivo.write(f"Tamaño de la respuesta: {response.headers.get('Content-Length', 'Desconocido')} bytes\n")
         
-    print(f"¡Archivo de metadatos guardado exitosamente en: {ruta_completa}")
+    print(f"¡Archivo de metadatos guardado exitosamente en: {ruta_completa}!")
     return str(ruta_completa)
+
+def verificar_post_descarga(datos):
+    """
+    Realiza un control de calidad matemático y físico sobre los datos crudos.
+    Evalúa volumen, límites físicos, duplicados ocultos y continuidad temporal.
+    Retorna True si la verificación fue exitosa o False si se detectaron anomalías.
+    """
+    print("\n--- [PASO 4.4] Verificación mínima post-descarga ---")
+    if datos is None:
+        print("[ERROR] No hay datos para verificar.")
+        return False
+
+    # Iniciamos el estado de la verificación como exitoso
+    verificacion_ok = True
+
+    # 1. Extracción de diccionarios de ambas variables para cruzarlas
+    irr_dict = datos["properties"]["parameter"]["ALLSKY_SFC_SW_DWN"]
+    temp_dict = datos["properties"]["parameter"]["T2M"]
+    
+    timestamps_irr = list(irr_dict.keys())
+    timestamps_temp = list(temp_dict.keys())
+
+    # =====================================================================
+    # CONTROL 1: Cruce de consistencia entre variables y Unicidad (Duplicados)
+    # =====================================================================
+    # Validamos que ambas variables contengan exactamente el mismo volumen de tiempos
+    if len(timestamps_irr) != len(timestamps_temp):
+        print(f"[ALERTA] Desalineación crítica: Irradiancia tiene {len(timestamps_irr)} registros y Temperatura {len(timestamps_temp)}.")
+        verificacion_ok = False
+        
+    # Nota metodológica para la tesis: En Python, las llaves de un diccionario colapsan los 
+    # duplicados al parsear el JSON. Validamos indirectamente usando conjuntos (set).
+    if len(timestamps_irr) != len(set(timestamps_irr)):
+        print("[ALERTA] Se detectaron colisiones de llaves duplicadas en la línea temporal.")
+        verificacion_ok = False
+    else:
+        print("   ✓ Validación de unicidad completada de forma indirecta (Sin claves duplicadas colapsadas).")
+
+    # Usamos los timestamps de irradiancia como eje principal para los siguientes controles
+    timestamps = timestamps_irr
+
+    # =====================================================================
+    # CONTROL 2: Conteo de filas teóricas vs reales
+    # =====================================================================
+    fecha_ini_obj = datetime.strptime(FECHA_INICIO, "%Y%m%d")
+    fecha_fin_obj = datetime.strptime(FECHA_FIN, "%Y%m%d")
+    
+    dias_totales = (fecha_fin_obj - fecha_ini_obj).days + 1
+    filas_teoricas = dias_totales * 24  
+    filas_reales = len(timestamps)
+
+    print(f"-> Control de Filas: Esperadas (Teóricas): {filas_teoricas} | Descargadas (Reales): {filas_reales}")
+    if filas_teoricas != filas_reales:
+        print(f"[ALERTA] Discrepancia en volumen de datos. Falta información en el rango temporal.")
+        verificacion_ok = False
+    else:
+        print("   ✓ El número de registros coincide perfectamente con el tiempo solicitado.")
+
+    # =====================================================================
+    # CONTROL 3: Límites físicos y valores extremos
+    # =====================================================================
+    irr_valores = [v for v in irr_dict.values() if v != -999]
+    temp_valores = [v for v in temp_dict.values() if v != -999]
+
+    # Ajuste: Si todos los valores son -999, las listas quedarán vacías
+    if not irr_valores or not temp_valores:
+        print("[ALERTA CRÍTICA] Todos los datos descargados corresponden a códigos de error (-999.0). No hay información válida.")
+        verificacion_ok = False
+    else:
+        min_irr, max_irr = min(irr_valores), max(irr_valores)
+        min_temp, max_temp = min(temp_valores), max(temp_valores)
+
+        print(f"-> Límites de Irradiancia: Mín: {min_irr} Wh/m² | Máx: {max_irr} Wh/m²")
+        print(f"-> Límites de Temperatura: Mín: {min_temp} °C | Máx: {max_temp} °C")
+
+        # Alertas de coherencia física
+        if min_irr < 0 or max_irr > 1400:
+            print("[ALERTA FÍSICA] Valores de irradiancia fuera de límites lógicos (negativos o absurdamente altos).")
+            verificacion_ok = False
+        elif min_temp < 0 or max_temp > 30:
+            print("[ALERTA FÍSICA] Valores de temperatura fuera de los límites lógicos de la región.")
+            verificacion_ok = False
+        else:
+            print("   ✓ Los valores extremos se encuentran dentro de los rangos físicos coherentes.")
+
+    # =====================================================================
+    # CONTROL 4: Continuidad temporal y detección de saltos (Paginación)
+    # =====================================================================
+    timestamps_ordenados = sorted(timestamps)
+    saltos_detectados = 0
+
+    for i in range(len(timestamps_ordenados) - 1):
+        actual = datetime.strptime(timestamps_ordenados[i], "%Y%m%d%H")
+        siguiente = datetime.strptime(timestamps_ordenados[i+1], "%Y%m%d%H")
+        
+        diferencia_horas = (siguiente - actual).total_seconds() / 3600
+        
+        if diferencia_horas != 1:
+            saltos_detectados += 1
+            print(f"   [Salto detectado] Entre {timestamps_ordenados[i]} and {timestamps_ordenados[i+1]} (Brecha: {diferencia_horas}h)")
+
+    if saltos_detectados == 0:
+        print("   ✓ Secuencia temporal continua. No se detectaron saltos de horas ni huecos de información.")
+    else:
+        print(f"[ALERTA] Se detectaron {saltos_detectados} saltos abruptos en la línea de tiempo.")
+        verificacion_ok = False
+
+    print("-----------------------------------------------------------")
+    return verificacion_ok
 
 def variables_reales(datos):
 
@@ -267,9 +385,7 @@ def aplanar_datos(irradiancia_final, temperatura_final, horas_sincronizadas):
 
     # Si necesitas ver el JSON aplanado puro:
     # print(json.dumps(dataset_plano, indent=4))
-
-def descargar_datos():
-    pass
+    return dataset_plano
 
 
 if __name__ == "__main__":
@@ -286,10 +402,13 @@ if __name__ == "__main__":
 
     ruta_metadatos = guardar_metadatos(response_objeto, params)
 
+    if not verificar_post_descarga(datos_crudos):
+        print("\nLa verificación post-descarga falló. Finalizando el programa.")
+        sys.exit(1)
+
     irr_limpia, temp_limpia = variables_reales(datos_crudos)
 
     irr_final, temp_final, horas_sincronizdas = numero_registros(irr_limpia, temp_limpia)
 
     aplanar_datos(irr_final, temp_final, horas_sincronizdas)
-
-    descargar_datos()  
+ 
