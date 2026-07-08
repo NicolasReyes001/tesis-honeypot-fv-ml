@@ -1,8 +1,8 @@
 # import argparse
-import json
 # import os
 # import glob
-from datetime import datetime
+# from datetime import datetime
+import json
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -15,8 +15,10 @@ import numpy as np
 # Opción 2: Dejar vacío para usar el más reciente
 ARCHIVO_JSON = None
 
+VALOR_RECHAZO = -999
 
 def cargar_json(nombre_archivo=None):
+
     ruta_base = Path("datos/raw/outputs_nasa")
 
     # Caso 1: El usuario indicó un archivo
@@ -42,17 +44,20 @@ def cargar_json(nombre_archivo=None):
     with open(ruta_archivo, "r", encoding="utf-8") as archivo:
         datos = json.load(archivo)
 
-    variables_disponibles = list(datos["parameters"].keys())
+    parameters = datos["properties"]["parameter"]
+    header = datos["header"]
+    geometry = datos["geometry"]
+    coordenadas = geometry["coordinates"]
 
-    fecha_inicio = datos["header"]["start"]
-    fecha_fin = datos["header"]["end"]
+    variables_disponibles = list(parameters.keys())
+
+    fecha_inicio = header["start"]
+    fecha_fin = header["end"]
 
     primera_variable = variables_disponibles[0]
-    numero_registros = len(datos["properties"]["parameter"][primera_variable])
+    numero_registros = len(parameters[primera_variable])
 
-    longitud = datos["geometry"]["coordinates"][0]
-    latitud = datos["geometry"]["coordinates"][1]
-    altitud = datos["geometry"]["coordinates"][2]
+    longitud, latitud, altitud = coordenadas
 
     print(f"Archivo cargado: {ruta_archivo.name}")
     print(f"Latitud: {latitud}")
@@ -65,14 +70,24 @@ def cargar_json(nombre_archivo=None):
 
     return datos
 
+def mostrar_resumen(df, titulo=""):
+
+    print(f"\n{titulo}")
+
+    print("\nPrimeras filas:")
+    print(df.head())
+
+    print("\nÚltimas filas:")
+    print(df.tail())
+
+    print("\nInformación:")
+    df.info()
 
 def convertir_json_a_dataframe(datos):
-    parametros = datos["properties"]["parameter"]
-
-    parametros = datos["properties"]["parameter"]
+    parameters = datos["properties"]["parameter"]
 
     # Crear el DataFrame directamente
-    df = pd.DataFrame(parametros)
+    df = pd.DataFrame(parameters)
 
     # Convertir el índice (timestamps) a datetime
     df.index = pd.to_datetime(df.index, format="%Y%m%d%H")
@@ -81,127 +96,115 @@ def convertir_json_a_dataframe(datos):
     df.index.name = "timestamp"
 
     # Ordenar cronológicamente
-    df.sort_index(inplace=True)
+    if not df.index.is_monotonic_increasing:
+        df.sort_index(inplace=True)
 
-    print("\nPrimer registro ordenado en el DataFrame:")
-    print(df.iloc[0])
-
-    print("\nPrimeras 5 filas:")
-    print(df.head())
-
-    print("\nÚltimas 5 filas:")
-    print(df.tail())
-
-    print("\nInformación del DataFrame:")
-    df.info()
+    mostrar_resumen(df, "DataFrame original")
 
     return df  # Es buena práctica retornar el DataFrame para usarlo luego
 
 def estadisticas_columna(serie):
 
-    total = serie.size
-    validos = serie.count()
+    total = len(serie)
+
     invalidos = serie.isna().sum()
-    porcentaje = (invalidos / total) * 100
+
+    validos = total - invalidos
+
+    porcentaje = invalidos * 100 / total
 
     return total, validos, invalidos, porcentaje
 
-def perfilar_datos_crudos(df):
+def clasificar_porcentaje(
+        porcentaje,
+        aceptable=5,
+        advertencia=20,
+        rechazo=50):
 
-    # Verificación de valores nulos en el DataFrame (-999).
-    valor_rechazo = -999
-    porcentaje_aceptado = 5.0       # 5%
-    porcentaje_advertencia = 20.0   # 20%
-    porcentaje_rechazo = 50.0       # 50%   
+    if porcentaje <= aceptable:
+        return "ACEPTABLE"
 
-    # Contamos cuántas celdas en total en las columnas numéricas tienen el valor de rechazo
+    elif porcentaje <= advertencia:
+        return "ADVERTENCIA"
+
+    elif porcentaje <= rechazo:
+        return "RECHAZO"
+
+    return "RECHAZO SEVERO"
+
+def evaluar_calidad_global(df):
+
     df_numerico = df.select_dtypes(include="number")
+
     total_celdas = df_numerico.size
 
     if total_celdas == 0:
-            raise ValueError("El DataFrame no contiene datos para evaluar.")
+        raise ValueError("El DataFrame no contiene datos para evaluar.")
 
-    total_invalidos = (df_numerico == valor_rechazo).sum().sum()
-    porcentaje_invalidos = (total_invalidos/total_celdas)*100
-    
-    print("\n")
-    print("Descripción dataframe actual: ")
-    print(f"Control de Calidad total: {porcentaje_invalidos:.4f}% de los datos son inválidos ({valor_rechazo}).")
+    total_invalidos = (df_numerico == VALOR_RECHAZO).sum().sum()
 
-    print("\n") 
-    
-    if porcentaje_invalidos <= porcentaje_aceptado:
-        estado_general = "ACEPTABLE"
-        print(f"Estado por porcentaje total: {estado_general}")
+    porcentaje_invalidos = total_invalidos * 100 / total_celdas
 
-    elif porcentaje_invalidos <= porcentaje_advertencia:
-        estado_general = "ADVERTENCIA"
-        print(f"Estado por porcentaje total: {estado_general}")
+    estado = clasificar_porcentaje(porcentaje_invalidos)
 
-    elif porcentaje_invalidos <= porcentaje_rechazo:
-        estado_general = "RECHAZO"
-        print(f"Estado por porcentaje total: {estado_general}")
+    return (
+        df_numerico,
+        total_celdas,
+        total_invalidos,
+        porcentaje_invalidos,
+        estado
+    )
 
-    else:
-        estado_general = "RECHAZO SEVERO"
-        print(f"Estado por porcentaje total: {estado_general}")
+def reemplazar_valores_invalidos(df, columnas):
 
-    
+    df[columnas] = df[columnas].replace(
+        VALOR_RECHAZO,
+        np.nan
+    )
 
-    print("Conversion de datos invalidados -999 a NaN.")
+    mostrar_resumen(
+        df,
+        "DataFrame después de reemplazar -999"
+    )
 
-    df = df.replace(valor_rechazo, np.nan)
-    print("\nPrimeras 5 filas del dataframe final")
-    print(df.head())
+    return df
 
-    print("\nÚltimas 5 filas del dataframe final:")
-    print(df.tail())
+def analizar_fechas_faltantes(df):
 
-    print("\nInformación del DataFrame del dataframe final:")
-    df.info()
-
-    print(f"total de datos: {total_celdas}")
-    print("\n")
-    print("CONTROL DE CALIDAD.")
-    print("------------------------------------------------------------------------------")
-    print("Control de calidad total:")
-
-    total_celdas = df.size
-    total_validos = df.count().sum()
-    puntos_faltantes = df.isna().sum().sum()
-
-    # Filas donde ALLSKY... O T2M (o ambas) sean NaN
     timestamps_faltantes = df.index[df.isna().any(axis=1)]
 
-    # Convertimos el índice de fechas faltantes en un DataFrame formal
-    df_faltantes = timestamps_faltantes.to_frame(index=False, name='Fechas Faltantes')
-    fecha_min = df_faltantes['Fechas Faltantes'].min()
-    fecha_max = df_faltantes['Fechas Faltantes'].max()
+    df_faltantes = timestamps_faltantes.to_frame(
+        index=False,
+        name="Fechas Faltantes"
+    )
 
-    # === CÁLCULO DE HORAS TOTALES CRONOLÓGICAS ===
-    # 1. Obtenemos la diferencia exacta en la línea de tiempo real
-    diferencia_base = df_faltantes['Fechas Faltantes'].max() - df_faltantes['Fechas Faltantes'].min()
-    
-    # 2. Le sumamos 1 hora (la frecuencia base) para incluir la duración del último intervalo completo
-    tiempo_real_total = diferencia_base + pd.Timedelta(hours=1)
-    
-    # 3. Convertimos el objeto Timedelta a un número flotante/entero de horas reales transcurridas
-    horas_totales = tiempo_real_total.total_seconds() / 3600
+    if df_faltantes.empty:
 
-    print(f"Datos totales: {total_celdas}")
-    print(f"Datos válidos totales: {total_validos}")
-    print(f"Datos inválidos totales: {total_invalidos}")
-    print(f"datos faltantes: {puntos_faltantes} de {total_celdas}.")
-    print(f"porcentaje de datos faltantes: {porcentaje_invalidos:.4f}%")
-    print("\n")
-    print("Timestamps de datos faltantes.")
-    print(df_faltantes)
-    print(f"desde {fecha_min} hasta {fecha_max}")
-    print(f"Horas totales transcurridas: {horas_totales}")
-    print("------------------------------------------------------------------------------")
-    # irradiancia.
+        return {
+            "faltantes": df_faltantes,
+            "fecha_min": None,
+            "fecha_max": None,
+            "horas": 0
+        }
+
+    fecha_min = df_faltantes["Fechas Faltantes"].min()
+    fecha_max = df_faltantes["Fechas Faltantes"].max()
+
+    horas_totales = (
+        (fecha_max - fecha_min).total_seconds()/3600
+    ) + 1
+
+    return {
+        "faltantes": df_faltantes,
+        "fecha_min": fecha_min,
+        "fecha_max": fecha_max,
+        "horas": horas_totales
+    }
+
+def analizar_columnas(df):
+
+     # irradiancia y temperatura.
     porcentajes = {}
-
     for columna in df.columns:
 
         print(f"Columna: {columna}")
@@ -216,42 +219,104 @@ def perfilar_datos_crudos(df):
         print(f"Datos faltantes: {invalidos} de {total}")
         print(f"Porcentaje de datos faltantes: {porcentaje:.4f}%")
         print("------------------------------------------------------------------------------")
-    # Temperatura.
+    # porcentaje critico.
     
-
     porcentaje_critico = max(porcentajes.values())
+
+    return porcentajes, porcentaje_critico
+
+def construir_reporte(
+    estado,
+    porcentaje,
+    filas,
+    inicio,
+    fin
+):
+    return {
+        "estado": estado,
+        "porcentaje": float(porcentaje),
+        "filas": int(filas),
+        "inicio": inicio.strftime("%Y-%m-%d %H:%M:%S"),
+        "fin": fin.strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+def perfilar_datos_crudos(df):
+
+    # 1. Evaluar la calidad global del DataFrame
+    (
+        df_numerico,
+        total_celdas,
+        total_invalidos,
+        porcentaje_invalidos,
+        estado_general
+    ) = evaluar_calidad_global(df)
+
+    print("\nDescripción del DataFrame actual:")
+    print(
+        f"Control de calidad total: "
+        f"{porcentaje_invalidos:.4f}% de los datos son inválidos ({VALOR_RECHAZO})."
+    )
+    print(f"Estado general: {estado_general}\n")
+
+    # 2. Reemplazar los valores inválidos por NaN
+    print("Conversión de datos invalidados (-999) a NaN.")
+    df = reemplazar_valores_invalidos(df, df_numerico.columns)
+
+    # 3. Estadísticas generales del DataFrame limpio
+    nan_mask = df.isna()
+
+    puntos_faltantes = nan_mask.sum().sum()
+
+    total_validos = df.size - puntos_faltantes
+
+    print("\nCONTROL DE CALIDAD")
+    print("------------------------------------------------------------------------------")
+    print(f"Datos totales: {total_celdas}")
+    print(f"Datos válidos: {total_validos}")
+    print(f"Datos inválidos originales: {total_invalidos}")
+    print(f"Datos faltantes: {puntos_faltantes} de {total_celdas}")
+    print(f"Porcentaje de datos faltantes: {porcentaje_invalidos:.4f}%")
+
+    # 4. Analizar fechas faltantes
+    fechas = analizar_fechas_faltantes(df)
+
+    print("\nTimestamps de datos faltantes:")
+    print(fechas["faltantes"])
+
+    if fechas["fecha_min"] is not None:
+        print(f"Desde: {fechas['fecha_min']}")
+        print(f"Hasta: {fechas['fecha_max']}")
+        print(f"Horas totales transcurridas: {fechas['horas']}")
+    else:
+        print("No existen datos faltantes.")
+
+    print("------------------------------------------------------------------------------")
+
+    # 5. Analizar cada columna
+    porcentajes, porcentaje_critico = analizar_columnas(df)
 
     print(f"Porcentaje crítico del sistema: {porcentaje_critico:.4f}%")
 
-    if porcentaje_critico <= porcentaje_aceptado:   
-        estado_final = "ACEPTABLE"
-        print(f"Estado del sistema global: {estado_final}")
+    estado_final = clasificar_porcentaje(porcentaje_critico)
+    print(f"Estado final del sistema: {estado_final}")
 
-    elif porcentaje_critico <= porcentaje_advertencia:
-        estado_final = "ADVERTENCIA"
-        print(f"Estado del sistema global: {estado_final}")
-
-    elif porcentaje_critico <= porcentaje_rechazo:
-        estado_final = "RECHAZO"
-        print(f"Estado del sistema global: {estado_final}")
-
-    else:
-        estado_final = "RECHAZO SEVERO"
-        print(f"Estado del sistema global: {estado_final}")
-
-
-
-    # Cantidad de filas del dataframe.
+    # 6. Información temporal del DataFrame
     numero_filas = len(df.index)
-    print(numero_filas)
-
-    # rango temporal real: primer timestamp y último timestamp.
     primer_timestamp = df.index.min()
     ultimo_timestamp = df.index.max()
-    print(primer_timestamp)
-    print(ultimo_timestamp)
 
+    print(f"Número de filas: {numero_filas}")
+    print(f"Primer timestamp: {primer_timestamp}")
+    print(f"Último timestamp: {ultimo_timestamp}")
 
+    # 7. Construcción del reporte
+    return construir_reporte(
+        estado_final,
+        porcentaje_critico,
+        numero_filas,
+        primer_timestamp,
+        ultimo_timestamp
+    )
 
 # El flujo de ejecución correcto va aquí dentro
 if __name__ == "__main__":
@@ -261,4 +326,7 @@ if __name__ == "__main__":
     # 2. Se procesan esos mismos datos en el DataFrame
     df_solar = convertir_json_a_dataframe(datos)
 
-    perfilar_df = perfilar_datos_crudos(df_solar)
+    reporte = perfilar_datos_crudos(df_solar)
+
+    print("\n reporte del sistema.")
+    print(reporte)
