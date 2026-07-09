@@ -1,11 +1,12 @@
 # import argparse
 # import os
 # import glob
-# from datetime import datetime
+from datetime import datetime
 import json
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 # python simulacion_fv/datasets_irradiancia/procesar_datos_crudos.py
 
@@ -16,6 +17,12 @@ ARCHIVO_JSON = "documento_prueba.json"
 # ARCHIVO_JSON = None
 
 VALOR_RECHAZO = -999
+FRECUENCIA_DATOS = "1h"
+
+MAX_HUECO_INTERPOLABLE_HORAS = 2
+
+RUTA_GRAFICOS = Path("datos/processed/reportes")
+RUTA_GRAFICOS.mkdir(parents=True, exist_ok=True)
 
 def cargar_json(nombre_archivo=None):
 
@@ -177,7 +184,7 @@ def analizar_fechas_faltantes(df):
 
     timestamps_faltantes = df.index[df.isna().any(axis=1)]
 
-    columnas = df.columns
+    columnas = [col for col in df.columns if col != "trazabilidad"]
 
     faltantes = {}
 
@@ -293,6 +300,50 @@ def construir_reporte(
         "fin": fin.strftime("%Y-%m-%d %H:%M:%S")
     }
 
+def generar_histogramas(df):
+
+    print("\nGenerando histogramas...")
+
+    variables = [
+        "T2M",
+        "ALLSKY_SFC_SW_DWN"
+    ]
+
+    nombres = {
+        "T2M": "temperatura",
+        "ALLSKY_SFC_SW_DWN": "irradiancia"
+    }
+
+    for variable in variables:
+
+        plt.figure(figsize=(8,5))
+
+        df[variable].dropna().hist(
+            bins=30
+        )
+
+        plt.title(variable)
+
+        plt.xlabel(variable)
+
+        plt.ylabel("Frecuencia")
+
+        plt.tight_layout()
+
+        archivo = (
+            RUTA_GRAFICOS /
+            f"histograma_{nombres[variable]}.png"
+        )
+
+        plt.savefig(
+            archivo,
+            dpi=300
+        )
+
+        plt.close()
+
+        print(f"Guardado: {archivo}")
+
 def perfilar_datos_crudos(df):
 
     # 1. Evaluar la calidad global del DataFrame
@@ -351,6 +402,7 @@ def perfilar_datos_crudos(df):
             print("No existen datos faltantes.")
             continue
 
+        
         for i, (_, hueco) in enumerate(info["huecos"].iterrows(), start=1):
 
             print(f"Hueco {i}")
@@ -367,6 +419,8 @@ def perfilar_datos_crudos(df):
         df,
         df_numerico.columns
     )
+
+    generar_histogramas(df)
 
     print(f"Porcentaje crítico del sistema: {porcentaje_critico:.4f}%")
 
@@ -394,9 +448,39 @@ def perfilar_datos_crudos(df):
 
     return df, reporte
 
+def verificar_continuidad_temporal(df):
+
+    print("\nVerificación de continuidad temporal")
+    print("-----------------------------------------------------")
+
+    indice_esperado = pd.date_range(
+        start=df.index.min(),
+        end=df.index.max(),
+        freq=FRECUENCIA_DATOS
+    )
+
+    faltantes = indice_esperado.difference(df.index)
+
+    if len(faltantes) == 0:
+
+        print("No existen registros temporales faltantes.")
+
+    else:
+
+        print(f"Se encontraron {len(faltantes)} timestamps inexistentes.")
+
+        print("\nPrimeros registros faltantes:")
+
+        print(faltantes[:20])
+
+    return faltantes
+
 def reconstruir_eje_temporal(df):
 
     frecuencia = "1h"
+
+    # --- CORRECCIÓN: Guardar el índice original antes del reindex ---
+    indice_original = df.index
 
     indice_completo = pd.date_range(
         start=df.index.min(),
@@ -405,23 +489,20 @@ def reconstruir_eje_temporal(df):
     )
 
     df = df.reindex(indice_completo)
-
     df.index.name = "timestamp"
 
     # Crear trazabilidad si aún no existe
     if "trazabilidad" not in df.columns:
         df["trazabilidad"] = "crudo"
+        
+    # --- CORRECCIÓN: Rellenar con "crudo" las filas nuevas para evitar NaN en strings ---
+    df["trazabilidad"] = df["trazabilidad"].fillna("crudo")
 
-    filas_reconstruidas = (
-        df[
-            ["ALLSKY_SFC_SW_DWN", "T2M"]
-        ].isna().all(axis=1)
-    )
+    # --- CORRECCIÓN: Identificar filas genuinamente nuevas por su ausencia en el índice original ---
+    filas_nuevas = ~df.index.isin(indice_original)
 
-    df.loc[
-        filas_reconstruidas,
-        "trazabilidad"
-    ] = "fila_reconstruida"
+    # Usamos agregar_traza por consistencia, aunque al ser filas nuevas están en "crudo"
+    df = agregar_traza(df, filas_nuevas, "fila_reconstruida")
 
     return df
 
@@ -442,21 +523,28 @@ def interpolar_temperatura(df):
 
     mask = df["T2M"].isna()
 
-
     df["T2M"] = (
         df["T2M"]
         .interpolate(
             method="time",
-            limit=2,
+            limit=MAX_HUECO_INTERPOLABLE_HORAS,
             limit_direction="both"
         )
     )
 
+    # 1. Anotar las que SÍ se recuperaron
     df = agregar_traza(
         df,
         mask & df["T2M"].notna(),
         "temperatura_interpolada"
     )
+
+    # 2. --- NUEVO: Anotar las que NO se pudieron recuperar ---
+    faltantes = (
+        df["T2M"].isna()
+    )
+
+    df = agregar_traza(df, faltantes, "temperatura_no_recuperada")
 
     return df
 
@@ -464,22 +552,19 @@ def interpolar_irradiancia(df):
 
     mask = df["ALLSKY_SFC_SW_DWN"].isna()
 
-
     df["ALLSKY_SFC_SW_DWN"] = (
         df["ALLSKY_SFC_SW_DWN"]
         .interpolate(
             method="time",
-            limit=2,
+            limit=MAX_HUECO_INTERPOLABLE_HORAS,
             limit_direction="both"
         )
     )
-
 
     interpolados = (
         mask &
         df["ALLSKY_SFC_SW_DWN"].notna()
     )
-
 
     df = agregar_traza(
         df,
@@ -487,17 +572,12 @@ def interpolar_irradiancia(df):
         "irradiancia_interpolada"
     )
 
-
     faltantes = (
         df["ALLSKY_SFC_SW_DWN"].isna()
     )
 
-
-    df.loc[
-        faltantes,
-        "trazabilidad"
-    ] = "irradiancia_no_recuperada"
-
+    # --- CORRECCIÓN: Cambiar la asignación directa por agregar_traza ---
+    df = agregar_traza(df, faltantes, "irradiancia_no_recuperada")
 
     return df
 
@@ -511,34 +591,23 @@ def interpolar_datos(df):
 
 def agregar_estado(df):
 
-    estado = []
+    # 1. Definimos las condiciones lógicas (máscaras booleanas)
+    # Reemplazamos pd.isna() por el método .isna() de Pandas
+    cond_faltante = df["ALLSKY_SFC_SW_DWN"].isna() | df["T2M"].isna()
 
-    for _, fila in df.iterrows():
+    # Reemplazamos el "in" de texto por .str.contains() que aplica a toda la columna de golpe
+    # na=False evita errores si hay nulos en trazabilidad
+    cond_reconstruido = df["trazabilidad"].str.contains(
+        "fila_reconstruida", na=False
+    )
+    cond_interpolado = df["trazabilidad"].str.contains("interpolada", na=False)
 
-        traz = fila["trazabilidad"]
+    # 2. Agrupamos las condiciones y sus respectivos resultados (en orden de prioridad)
+    condiciones = [cond_faltante, cond_reconstruido, cond_interpolado]
+    opciones = ["faltante", "reconstruido", "interpolado"]
 
-        irradiancia = fila["ALLSKY_SFC_SW_DWN"]
-
-        temperatura = fila["T2M"]
-
-
-        if pd.isna(irradiancia) or pd.isna(temperatura):
-            estado.append("faltante")
-
-
-        elif "interpolada" in traz:
-            estado.append("interpolado")
-
-
-        elif "reconstruida" in traz or "fila_reconstruida" in traz:
-            estado.append("reconstruido")
-
-
-        else:
-            estado.append("valido")
-
-
-    df["estado"] = estado
+    # 3. Aplicamos np.select. El parámetro 'default' es nuestro 'else'
+    df["estado"] = np.select(condiciones, opciones, default="valido")
 
     return df
 
@@ -547,10 +616,10 @@ def validar_rangos_fisicos(df):
     errores = []
 
     if (df["T2M"] < 0).any():
-        errores.append("Temperatura menor a -50 C")
+        errores.append("Temperatura menor a 0 C")
 
     if (df["T2M"] > 30).any():
-        errores.append("Temperatura mayor a 60 C")
+        errores.append("Temperatura mayor a 30 C")
 
     if (df["ALLSKY_SFC_SW_DWN"] < 0).any():
         errores.append("Irradiancia negativa")
@@ -568,11 +637,149 @@ def validar_resultado(df):
 
     return df
 
-# El flujo de ejecución correcto va aquí dentro
+def calcular_orto_ocaso(latitud, longitud, timestamps):
+    """
+    Calcula la hora de salida (orto) y puesta (ocaso) del sol para una localización
+    en Hora Local (asumiendo que los timestamps ya están en la hora local correcta).
+    Implementación simplificada de las ecuaciones astronómicas del NOAA.
+    """
+    # Convertir latitud a radianes
+    lat_rad = np.radians(latitud)
+    
+    # Extraer el día del año (1 a 365) y la hora decimal
+    dia_del_ano = timestamps.dayofyear
+    hora_decimal = timestamps.hour + timestamps.minute / 60.0
+    
+    # 1. Ángulo fraccional del año (en radianes)
+    g = 2 * np.pi * (dia_del_ano - 1) / 365
+    
+    # 2. Declinación solar (en radianes) - Ecuación de Spencer
+    declinacion = (0.006918 
+                   - 0.399912 * np.cos(g) + 0.070257 * np.sin(g) 
+                   - 0.006758 * np.cos(2*g) + 0.000907 * np.sin(2*g) 
+                   - 0.002697 * np.cos(3*g) + 0.00148 * np.sin(3*g))
+    
+    # 3. Ángulo horario del amanecer/atardecer (Cenit solar = 90.833° para refracción atmosférica)
+    # cos(w_s) = (cos(90.833) - sin(lat)*sin(dec)) / (cos(lat)*cos(dec))
+    cos_w_s = (np.cos(np.radians(90.833)) - np.sin(lat_rad) * np.sin(declinacion)) / (np.cos(lat_rad) * np.cos(declinacion))
+    
+    # Asegurar límites matemáticos por si hay sol de medianoche/noche polar
+    cos_w_s = np.clip(cos_w_s, -1.0, 1.0)
+    w_s = np.arccos(cos_w_s) # en radianes
+    
+    # Convertir ángulo horario a horas (1 rad = 3.8197 horas)
+    duracion_media_dia = np.degrees(w_s) / 15.0
+    
+    # 4. Hora del mediodía solar aproximada (en hora local estándar, ignorando ecuación del tiempo fina)
+    # Si la serie ya viene ajustada a la hora local, el mediodía ocurre cerca de las 12:00
+    mediodia_solar = 12.0 
+    
+    hora_amanecer = mediodia_solar - duracion_media_dia
+    hora_atardecer = mediodia_solar + duracion_media_dia
+    
+    return hora_amanecer.values, hora_atardecer.values
+
+
+def validar_coherencia_solar(df, latitud, longitud):
+    """
+    Paso 5.4: Valida el sentido físico de la irradiancia usando límites astronómicos.
+    Detecta desfases horarios (UTC vs Local) e inconsistencias físicas de valores nocturnos.
+    """
+    print("\n[Paso 5.4] Iniciando Validación de Sentido Físico...")
+    
+    # Calcular horas límite astronómicas para cada timestamp
+    amanecer, atardecer = calcular_orto_ocaso(latitud, longitud, df.index)
+    horas_actuales = df.index.hour + df.index.minute / 60.0
+    
+    # Definir si astronómicamente es de noche (con un margen de tolerancia de 30 min por seguridad)
+    es_noche_astronomica = (horas_actuales < (amanecer - 0.5)) | (horas_actuales > (atardecer + 0.5))
+    
+    # Buscar registros donde hay irradiancia positiva significativa en plena noche astronómica
+    registro_solar_nocturno = es_noche_astronomica & (df["ALLSKY_SFC_SW_DWN"] > 5.0)
+    
+    # Buscar registros donde es pleno día pero hay ceros absolutos (excluyendo fallas/nan ya controlados)
+    es_dia_astronomico = (horas_actuales > (amanecer + 1.0)) & (horas_actuales < (atardecer - 1.0))
+    registro_cero_diurno = es_dia_astronomico & (df["ALLSKY_SFC_SW_DWN"] == 0) & (df["estado"] == "valido")
+
+    errores = []
+    
+    # Evaluación de Zona Horaria / Desfases
+    if registro_solar_nocturno.sum() > 0:
+        horas_conflicto = df[registro_solar_nocturno].index.hour.unique()
+        errores.append(
+            f"ALERTA CRÍTICA: Se detectó irradiancia > 5 W/m² en horas de la noche ({list(horas_conflicto)}). "
+            f"Esto indica casi con certeza un desfase de Zona Horaria (ej. Datos en UTC no convertidos a hora local)."
+        )
+    
+    if registro_cero_diurno.sum() > (len(df) * 0.05): # Si pasa del 5% del dataset
+        errores.append(
+            "ADVERTENCIA: Hay un volumen inusual de ceros de irradiancia en horas centrales del día. "
+            "Verificar si la fuente contiene bloqueos o errores de medición no tipificados."
+        )
+        
+    # Corrección Física Automatizada: Forzar a 0 la irradiancia en la noche real si el error es mínimo (< 5 W/m²)
+    noches_limpias = es_noche_astronomica & (df["ALLSKY_SFC_SW_DWN"] <= 5.0) & (df["ALLSKY_SFC_SW_DWN"] > 0)
+    if noches_limpias.sum() > 0:
+        df.loc[noches_limpias, "ALLSKY_SFC_SW_DWN"] = 0.0
+        df = agregar_traza(df, noches_limpias, "forzado_cero_nocturno")
+        print(f"-> Se forzaron a 0.0 W/m² un total de {noches_limpias.sum()} registros nocturnos con ruido instrumental menor.")
+
+    if not errores:
+        print("-> Validación física exitosa: La curva solar coincide con el ciclo día/noche de la región.")
+    else:
+        for err in errores:
+            print(f"-> {err}")
+            
+    return df, errores
+
+def validar_patron_estacional(df, latitud, longitud):
+
+    print("\nValidación estacional")
+
+    dias = (
+        pd.Series(df.index.normalize())
+        .drop_duplicates()
+    )
+
+    resumen = []
+
+    for dia in dias:
+
+        amanecer, atardecer = calcular_orto_ocaso(
+            latitud,
+            longitud,
+            pd.DatetimeIndex([dia])
+        )
+
+        duracion = atardecer[0] - amanecer[0]
+
+        resumen.append({
+            "fecha": dia,
+            "amanecer": amanecer[0],
+            "atardecer": atardecer[0],
+            "duracion": duracion
+        })
+
+    resumen = pd.DataFrame(resumen)
+
+    print(resumen.head())
+
+    print("\nDuración mínima del día")
+
+    print(resumen["duracion"].min())
+
+    print("\nDuración máxima del día")
+
+    print(resumen["duracion"].max())
+
+    return resumen
+
 if __name__ == "__main__":
 
-    # 1. Cargar JSON
+    # 1. Cargar JSON y extraer coordenadas físicas reales del encabezado
     datos = cargar_json(ARCHIVO_JSON)
+    coordenadas = datos["geometry"]["coordinates"]
+    longitud, latitud, altitud = coordenadas
 
     # 2. Convertir a DataFrame
     df_solar = convertir_json_a_dataframe(datos)
@@ -580,51 +787,193 @@ if __name__ == "__main__":
     # 3. Perfilado y limpieza inicial (-999 -> NaN)
     df_solar, reporte = perfilar_datos_crudos(df_solar)
 
+    verificar_continuidad_temporal(df_solar)
+
     # 4. Reconstrucción del eje temporal
     df_solar = reconstruir_eje_temporal(df_solar)
 
-    # 5. Interpolación
+    # 5. Interpolación y asignación de estados de calidad de datos
     df_solar = interpolar_datos(df_solar)
-
     df_solar = agregar_estado(df_solar)
 
+    # 6. Validaciones de Rangos Físicos Básicos
     errores_fisicos = validar_rangos_fisicos(df_solar)
-
-    print("\nValidación física")
-
+    print("\nValidación de límites absolutos:")
     if errores_fisicos:
         for error in errores_fisicos:
-            print(error)
+            print(f" Alerta: {error}")
     else:
-        print("Datos dentro de rangos físicos")
+        print(" Datos dentro de rangos límites estándar.")
 
-    print(df_solar.tail(30))
+    # =========================================================================
+    # NUEVO -> PASO 5.4: Validación de Coherencia Solar (Ciclo Astronómico)
+    # =========================================================================
+    df_solar, alertas_astronomicas = validar_coherencia_solar(df_solar, latitud, longitud)
 
-    print(
-        df_solar["estado"]
-        .value_counts()
+    resumen_estacional = validar_patron_estacional(
+        df_solar,
+        latitud,
+        longitud
     )
 
-    # 6. Validación final
+    # 7. Validación de estructura final
     validar_resultado(df_solar)
 
-    print("\nReporte del sistema")
-    print(reporte)
+    print("\nResumen final del estado de calidad de las celdas (Para Tesis):")
+    print(df_solar["estado"].value_counts())
 
-    # Guardar dataset procesado
+    # =========================================================================
+    # NUEVO -> PASO 5.5: Guardar con Metadatos e Información de Zona Horaria
+    # =========================================================================
+    # Agregamos la columna explícita de zona horaria para mitigar errores futuros de lectura
+    df_solar["zona_horaria"] = "Hora_Local_Localizada" 
 
-    ruta_salida = Path(
-        "datos/processed/outputs_nasa/datos_fv_limpios.csv"
-    )
+    ruta_salida = Path("datos/processed/outputs_nasa/datos_fv_limpios.csv")
+    ruta_salida.parent.mkdir(parents=True, exist_ok=True)
 
-    ruta_salida.parent.mkdir(
-        exist_ok=True
-    )
+    # Guardar el CSV principal
+    df_solar.to_csv(ruta_salida, index=True)
+    print(f"\n[Paso 5.5] Dataset procesado guardado exitosamente en: {ruta_salida}")
 
-    df_solar.to_csv(
-        ruta_salida
-    )
+    # Guardar un archivo de metadatos .json al lado del archivo procesado para soporte metodológico de la tesis
+    ruta_metadatos = ruta_salida.with_suffix(".json")
+    metadatos_tesis = {
 
-    print(
-        f"\nDataset guardado en: {ruta_salida}"
-    )
+        "descripcion": (
+            "Dataset de irradiancia y temperatura superficial "
+            "procesado, reconstruido temporalmente, interpolado "
+            "y validado físicamente."
+        ),
+
+        "fecha_procesamiento": datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
+
+        "coordenadas": {
+            "latitud": latitud,
+            "longitud": longitud,
+            "altitud_m": altitud
+        },
+
+        "periodo": {
+            "inicio": str(df_solar.index.min()),
+            "fin": str(df_solar.index.max()),
+            "numero_registros": int(len(df_solar))
+        },
+
+        "variables": [
+            "ALLSKY_SFC_SW_DWN",
+            "T2M"
+        ],
+
+        "coherencia_temporal": {
+            "frecuencia": FRECUENCIA_DATOS,
+            "indexado": "Serie temporal continua reconstruida",
+            "filas_reconstruidas": int(
+                (
+                    df_solar["trazabilidad"]
+                    .str.contains(
+                        "fila_reconstruida",
+                        na=False
+                    )
+                ).sum()
+            )
+        },
+
+        "interpolacion": {
+
+            "metodo": "time",
+
+            "max_horas_interpolables":
+            MAX_HUECO_INTERPOLABLE_HORAS,
+
+            "temperatura_interpolada": int(
+                (
+                    df_solar["trazabilidad"]
+                    .str.contains(
+                        "temperatura_interpolada",
+                        na=False
+                    )
+                ).sum()
+            ),
+
+            "irradiancia_interpolada": int(
+                (
+                    df_solar["trazabilidad"]
+                    .str.contains(
+                        "irradiancia_interpolada",
+                        na=False
+                    )
+                ).sum()
+            ),
+
+            "temperatura_no_recuperada": int(
+                (
+                    df_solar["trazabilidad"]
+                    .str.contains(
+                        "temperatura_no_recuperada",
+                        na=False
+                    )
+                ).sum()
+            ),
+
+            "irradiancia_no_recuperada": int(
+                (
+                    df_solar["trazabilidad"]
+                    .str.contains(
+                        "irradiancia_no_recuperada",
+                        na=False
+                    )
+                ).sum()
+            )
+        },
+
+        "validacion_fisica": {
+
+            "rangos_temperatura": "0 °C a 30 °C",
+
+            "rangos_irradiancia": "0 a 1400 W/m²",
+
+            "coherencia_dia_noche":
+            "Validada mediante orto y ocaso astronómico",
+
+            "alertas": alertas_astronomicas
+
+        },
+
+        "zona_horaria_timestamps":
+        "Hora Local (Ajuste astronómico verificado)",
+
+        "estado_calidad": (
+            df_solar["estado"]
+            .value_counts()
+            .to_dict()
+        ),
+
+        "metricas_calidad_porcentaje": (
+            df_solar["estado"]
+            .value_counts(normalize=True)
+            .mul(100)
+            .round(3)
+            .to_dict()
+        ),
+        
+        "limitaciones": [
+
+        "Se interpolan únicamente huecos de hasta 2 horas mediante interpolación temporal.",
+
+        "Los huecos superiores a 2 horas permanecen como datos faltantes y son marcados para su exclusión en etapas posteriores del modelado.",
+
+        "La interpolación se realiza utilizando el índice temporal (method='time').",
+
+        "Las transiciones de irradiancia durante amanecer y atardecer no reciben un tratamiento diferencial. En estos periodos la irradiancia presenta cambios rápidos, por lo que los valores interpolados pueden tener una incertidumbre mayor que durante las horas centrales del día.",
+
+        "La temperatura e irradiancia se interpolan de manera independiente debido a sus diferentes comportamientos físicos."
+
+    ]
+
+    }
+
+    with open(ruta_metadatos, "w", encoding="utf-8") as f:
+        json.dump(metadatos_tesis, f, indent=4, ensure_ascii=False)
+    print(f"[Paso 5.5] Metadatos metodológicos para la tesis generados en: {ruta_metadatos}\n")
