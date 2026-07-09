@@ -79,7 +79,7 @@ def ejecutar_peticion(params):
                 header = datos["header"]
                 print(header["start"])
                 print(header["end"])
-
+                
                 return datos, response
 
             
@@ -96,7 +96,7 @@ def ejecutar_peticion(params):
             print(f"Esperando {espera_segundos} segundos antes del reintento automático...")
             time.sleep(espera_segundos)
             print("-" * 40)
-            
+
     # Si el bucle termina, significa que todos los intentos fallaron
     print("\n[ERROR] Se agotaron los intentos disponibles y no se pudo obtener respuesta válida.")
     return None, None
@@ -246,11 +246,14 @@ def verificar_post_descarga(datos):
         if min_irr < 0 or max_irr > 1400:
             print("[ALERTA FÍSICA] Valores de irradiancia fuera de límites lógicos (negativos o absurdamente altos).")
             verificacion_ok = False
-        elif min_temp < 0 or max_temp > 30:
+        else:
+            print("   ✓ Los valores extremos de irradiancia se encuentran dentro de los rangos físicos coherentes.")
+
+        if min_temp < 0 or max_temp > 30:
             print("[ALERTA FÍSICA] Valores de temperatura fuera de los límites lógicos de la región.")
             verificacion_ok = False
         else:
-            print("   ✓ Los valores extremos se encuentran dentro de los rangos físicos coherentes.")
+            print("   ✓ Los valores extremos de temperatura se encuentran dentro de los rangos físicos coherentes.")
 
     # =====================================================================
     # CONTROL 4: Continuidad temporal y detección de saltos (Paginación)
@@ -277,11 +280,17 @@ def verificar_post_descarga(datos):
     print("-----------------------------------------------------------")
     return verificacion_ok
 
-def variables_reales(datos):
+# def variables_reales(datos):
 
     irradiancia_original = datos["properties"]["parameter"]["ALLSKY_SFC_SW_DWN"]
     # print("Irradiancia original:")
     # print(irradiancia_original)
+    print("hola")
+    print("hola")
+    print("hola")
+    print("hola")
+    print("hola")
+    print("hola")
 
     temperatura_original = datos["properties"]["parameter"]["T2M"]
     # print("Temperatura original:")
@@ -327,7 +336,7 @@ def variables_reales(datos):
     
     return irradiancia_limpia, temperatura_limpia
 
-def numero_registros(irradiancia_limpia, temperatura_limpia):
+# def numero_registros(irradiancia_limpia, temperatura_limpia):
     
     horas_sincronizadas = set(irradiancia_limpia.keys()) & set(temperatura_limpia.keys())
     irradiancia_final = {}
@@ -355,7 +364,7 @@ def numero_registros(irradiancia_limpia, temperatura_limpia):
 
     return irradiancia_final, temperatura_final, horas_sincronizadas
 
-def aplanar_datos(irradiancia_final, temperatura_final, horas_sincronizadas):
+# def aplanar_datos(irradiancia_final, temperatura_final, horas_sincronizadas):
 
     dataset_plano = []
     for timestamp in sorted(horas_sincronizadas):
@@ -406,9 +415,9 @@ if __name__ == "__main__":
         print("\nLa verificación post-descarga falló. Finalizando el programa.")
         sys.exit(1)
 
-    irr_limpia, temp_limpia = variables_reales(datos_crudos)
+    # irr_limpia, temp_limpia = variables_reales(datos_crudos)
 
-    irr_final, temp_final, horas_sincronizdas = numero_registros(irr_limpia, temp_limpia)
+    # irr_final, temp_final, horas_sincronizdas = numero_registros(irr_limpia, temp_limpia)
 
-    aplanar_datos(irr_final, temp_final, horas_sincronizdas)
+    # aplanar_datos(irr_final, temp_final, horas_sincronizdas)
  
