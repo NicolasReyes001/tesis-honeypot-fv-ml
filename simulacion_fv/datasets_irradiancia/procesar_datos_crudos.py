@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 # python simulacion_fv/datasets_irradiancia/procesar_datos_crudos.py
 
 # Opción 1: Especificar un archivo JSON concreto
-# ARCHIVO_JSON = "archivo_pruebas.json"
+ARCHIVO_JSON = "datos_crudos_4.6401_-74.0801_20260301_20260301.json"
 
 # Opción 2: Dejar vacío para usar el más reciente
 # ARCHIVO_JSON = None
 
-# Archivos de simulacion de casos.
+# Opción 3: Archivos de simulacion de casos.
 # CASO 1: caso_01_normal.json - Caso base - Todo válido, sin correcciones ni alertas.
 # ARCHIVO_JSON = "caso_01_normal.json"
 
@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 # ARCHIVO_JSON = "caso_04_timestamps_faltantes.json"
 
 # CASO 5: caso_05_validacion_fisica.json - Consistencia física - Detección de valores fuera de rango, irradiancia nocturna, ruido nocturno y demás validaciones físicas.
-ARCHIVO_JSON = "caso_05_validacion_fisica.json"
+# ARCHIVO_JSON = "caso_05_validacion_fisica.json"
 
 VALOR_RECHAZO = -999
 FRECUENCIA_DATOS = "1h"
