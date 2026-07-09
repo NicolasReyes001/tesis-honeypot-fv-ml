@@ -11,10 +11,26 @@ import matplotlib.pyplot as plt
 # python simulacion_fv/datasets_irradiancia/procesar_datos_crudos.py
 
 # Opción 1: Especificar un archivo JSON concreto
-ARCHIVO_JSON = "documento_prueba.json"
+# ARCHIVO_JSON = "archivo_pruebas.json"
 
 # Opción 2: Dejar vacío para usar el más reciente
 # ARCHIVO_JSON = None
+
+# Archivos de simulacion de casos.
+# CASO 1: caso_01_normal.json - Caso base - Todo válido, sin correcciones ni alertas.
+# ARCHIVO_JSON = "caso_01_normal.json"
+
+# CASO 2: caso_02_interpolacion.json - Huecos pequeños - Interpolación de huecos de hasta 2 horas y actualización de la trazabilidad.
+# ARCHIVO_JSON = "caso_02_interpolacion.json"
+
+# CASO 3: caso_03_huecos_grandes.json - Huecos largos - Los datos no se interpolan y permanecen como faltantes.
+# ARCHIVO_JSON = "caso_03_huecos_grandes.json"
+
+# CASO 4: caso_04_timestamps_faltantes.json - Continuidad temporal - Reconstrucción del índice temporal y marcado de filas reconstruidas.
+# ARCHIVO_JSON = "caso_04_timestamps_faltantes.json"
+
+# CASO 5: caso_05_validacion_fisica.json - Consistencia física - Detección de valores fuera de rango, irradiancia nocturna, ruido nocturno y demás validaciones físicas.
+ARCHIVO_JSON = "caso_05_validacion_fisica.json"
 
 VALOR_RECHAZO = -999
 FRECUENCIA_DATOS = "1h"
@@ -412,8 +428,6 @@ def perfilar_datos_crudos(df):
             print(f"Cantidad de registros : {hueco['cantidad']}")
             print("-" * 40)
 
-    print("------------------------------------------------------------------------------")
-
     # 5. Analizar cada columna
     porcentajes, porcentaje_critico = analizar_columnas(
         df,
@@ -519,30 +533,33 @@ def agregar_traza(df, mascara, texto):
 
     return df
 
+def obtener_mascara_huecos_interpolables(serie):
+
+    mascara_nan = serie.isna()
+
+    grupos = (mascara_nan != mascara_nan.shift()).cumsum()
+
+    tamano_grupo = mascara_nan.groupby(grupos).transform("sum")
+
+    return mascara_nan & (
+        tamano_grupo <= MAX_HUECO_INTERPOLABLE_HORAS
+    )
+
 def interpolar_temperatura(df):
 
     mask = df["T2M"].isna()
 
-    df["T2M"] = (
-        df["T2M"]
-        .interpolate(
-            method="time",
-            limit=MAX_HUECO_INTERPOLABLE_HORAS,
-            limit_direction="both"
-        )
-    )
+    interpolables = obtener_mascara_huecos_interpolables(df["T2M"])
+
+    serie = (df["T2M"].interpolate(method="time"))
+
+    df.loc[interpolables,"T2M"] = serie.loc[interpolables]
 
     # 1. Anotar las que SÍ se recuperaron
-    df = agregar_traza(
-        df,
-        mask & df["T2M"].notna(),
-        "temperatura_interpolada"
-    )
+    df = agregar_traza(df,mask & df["T2M"].notna(),"temperatura_interpolada")
 
     # 2. --- NUEVO: Anotar las que NO se pudieron recuperar ---
-    faltantes = (
-        df["T2M"].isna()
-    )
+    faltantes = (df["T2M"].isna())
 
     df = agregar_traza(df, faltantes, "temperatura_no_recuperada")
 
@@ -552,29 +569,15 @@ def interpolar_irradiancia(df):
 
     mask = df["ALLSKY_SFC_SW_DWN"].isna()
 
-    df["ALLSKY_SFC_SW_DWN"] = (
-        df["ALLSKY_SFC_SW_DWN"]
-        .interpolate(
-            method="time",
-            limit=MAX_HUECO_INTERPOLABLE_HORAS,
-            limit_direction="both"
-        )
-    )
+    interpolables = obtener_mascara_huecos_interpolables(df["ALLSKY_SFC_SW_DWN"])
 
-    interpolados = (
-        mask &
-        df["ALLSKY_SFC_SW_DWN"].notna()
-    )
+    serie = (df["ALLSKY_SFC_SW_DWN"].interpolate(method="time"))
 
-    df = agregar_traza(
-        df,
-        interpolados,
-        "irradiancia_interpolada"
-    )
+    df.loc[interpolables,"ALLSKY_SFC_SW_DWN"] = serie.loc[interpolables]
 
-    faltantes = (
-        df["ALLSKY_SFC_SW_DWN"].isna()
-    )
+    df = agregar_traza(df,mask & df["ALLSKY_SFC_SW_DWN"].notna(),"irradiancia_interpolada")
+
+    faltantes = (df["ALLSKY_SFC_SW_DWN"].isna())
 
     # --- CORRECCIÓN: Cambiar la asignación directa por agregar_traza ---
     df = agregar_traza(df, faltantes, "irradiancia_no_recuperada")
@@ -591,27 +594,95 @@ def interpolar_datos(df):
 
 def agregar_estado(df):
 
-    # 1. Definimos las condiciones lógicas (máscaras booleanas)
-    # Reemplazamos pd.isna() por el método .isna() de Pandas
-    cond_faltante = df["ALLSKY_SFC_SW_DWN"].isna() | df["T2M"].isna()
-
-    # Reemplazamos el "in" de texto por .str.contains() que aplica a toda la columna de golpe
-    # na=False evita errores si hay nulos en trazabilidad
-    cond_reconstruido = df["trazabilidad"].str.contains(
-        "fila_reconstruida", na=False
+    cond_faltante = (
+        df["ALLSKY_SFC_SW_DWN"].isna()
+        | df["T2M"].isna()
     )
-    cond_interpolado = df["trazabilidad"].str.contains("interpolada", na=False)
 
-    # 2. Agrupamos las condiciones y sus respectivos resultados (en orden de prioridad)
-    condiciones = [cond_faltante, cond_reconstruido, cond_interpolado]
-    opciones = ["faltante", "reconstruido", "interpolado"]
+    cond_reconstruido = (
+        df["trazabilidad"]
+        .str.contains("fila_reconstruida", na=False)
+    )
 
-    # 3. Aplicamos np.select. El parámetro 'default' es nuestro 'else'
-    df["estado"] = np.select(condiciones, opciones, default="valido")
+    cond_corregido_fisicamente = (
+        df["trazabilidad"].str.contains(
+            "fuera_rango",
+            na=False
+        )
+    )
+
+    cond_interpolado = (
+        df["trazabilidad"].str.contains(
+            "interpolada",
+            na=False
+        )
+    )
+
+    condiciones = [
+
+        cond_faltante,
+
+        cond_reconstruido,
+
+        cond_corregido_fisicamente,
+
+        cond_interpolado
+
+    ]
+
+    opciones = [
+
+        "faltante",
+
+        "reconstruido",
+
+        "corregido_fisicamente",
+
+        "interpolado"
+
+    ]
+
+    df["estado"] = np.select(
+        condiciones,
+        opciones,
+        default="valido"
+    )
 
     return df
 
-def validar_rangos_fisicos(df):
+def agregar_origen(df):
+
+    condiciones = [
+
+        df["trazabilidad"].str.contains(
+            "fila_reconstruida",
+            na=False
+        ),
+
+        df["trazabilidad"].str.contains(
+            "interpolada",
+            na=False
+        )
+
+    ]
+
+    opciones = [
+
+        "reconstruido",
+
+        "interpolado"
+
+    ]
+
+    df["origen"] = np.select(
+        condiciones,
+        opciones,
+        default="original"
+    )
+
+    return df
+
+# def validar_rangos_fisicos(df):
 
     errores = []
 
@@ -695,11 +766,16 @@ def validar_coherencia_solar(df, latitud, longitud):
     es_noche_astronomica = (horas_actuales < (amanecer - 0.5)) | (horas_actuales > (atardecer + 0.5))
     
     # Buscar registros donde hay irradiancia positiva significativa en plena noche astronómica
-    registro_solar_nocturno = es_noche_astronomica & (df["ALLSKY_SFC_SW_DWN"] > 5.0)
-    
+    registro_solar_nocturno = (es_noche_astronomica & df["ALLSKY_SFC_SW_DWN"].notna() & (df["ALLSKY_SFC_SW_DWN"] > 5))
+
+
     # Buscar registros donde es pleno día pero hay ceros absolutos (excluyendo fallas/nan ya controlados)
     es_dia_astronomico = (horas_actuales > (amanecer + 1.0)) & (horas_actuales < (atardecer - 1.0))
-    registro_cero_diurno = es_dia_astronomico & (df["ALLSKY_SFC_SW_DWN"] == 0) & (df["estado"] == "valido")
+    registro_cero_diurno = (
+        es_dia_astronomico
+        & (df["ALLSKY_SFC_SW_DWN"] == 0)
+        & df["ALLSKY_SFC_SW_DWN"].notna()
+    )
 
     errores = []
     
@@ -718,7 +794,7 @@ def validar_coherencia_solar(df, latitud, longitud):
         )
         
     # Corrección Física Automatizada: Forzar a 0 la irradiancia en la noche real si el error es mínimo (< 5 W/m²)
-    noches_limpias = es_noche_astronomica & (df["ALLSKY_SFC_SW_DWN"] <= 5.0) & (df["ALLSKY_SFC_SW_DWN"] > 0)
+    noches_limpias = (es_noche_astronomica & df["ALLSKY_SFC_SW_DWN"].notna() & (df["ALLSKY_SFC_SW_DWN"] > 0) & (df["ALLSKY_SFC_SW_DWN"] <= 5))
     if noches_limpias.sum() > 0:
         df.loc[noches_limpias, "ALLSKY_SFC_SW_DWN"] = 0.0
         df = agregar_traza(df, noches_limpias, "forzado_cero_nocturno")
@@ -731,6 +807,97 @@ def validar_coherencia_solar(df, latitud, longitud):
             print(f"-> {err}")
             
     return df, errores
+
+def validar_consistencia_fisica(df):
+
+    print("\nValidación de consistencia física")
+    print("-----------------------------------------------------")
+
+    inconsistencias = []
+
+    # Irradiancia negativa
+    mask = df["ALLSKY_SFC_SW_DWN"] < 0
+
+    if mask.any():
+
+        inconsistencias.append(
+            f"Irradiancia negativa: {mask.sum()} registros."
+        )
+
+        df.loc[mask, "ALLSKY_SFC_SW_DWN"] = np.nan
+
+        df = agregar_traza(
+            df,
+            mask,
+            "irradiancia_fuera_rango"
+        )
+
+    # Irradiancia mayor al máximo físico
+
+    mask = df["ALLSKY_SFC_SW_DWN"] > 1400
+
+    if mask.any():
+
+        inconsistencias.append(
+            f"Irradiancia >1400 W/m²: {mask.sum()} registros."
+        )
+
+        df.loc[mask, "ALLSKY_SFC_SW_DWN"] = np.nan
+
+        df = agregar_traza(
+            df,
+            mask,
+            "irradiancia_fuera_rango"
+        )
+
+    # Temperatura menor al mínimo
+
+    mask = df["T2M"] < 0
+
+    if mask.any():
+
+        inconsistencias.append(
+            f"Temperatura <0°C: {mask.sum()} registros."
+        )
+
+        df.loc[mask, "T2M"] = np.nan
+
+        df = agregar_traza(
+            df,
+            mask,
+            "temperatura_fuera_rango"
+        )
+
+    # Temperatura mayor al máximo
+
+    mask = df["T2M"] > 30
+
+    if mask.any():
+
+        inconsistencias.append(
+            f"Temperatura >30°C: {mask.sum()} registros."
+        )
+
+        df.loc[mask, "T2M"] = np.nan
+
+        df = agregar_traza(
+            df,
+            mask,
+            "temperatura_fuera_rango"
+        )
+
+    if inconsistencias:
+
+        print("Se detectaron inconsistencias físicas:")
+
+        for x in inconsistencias:
+            print("-", x)
+
+    else:
+
+        print("No se detectaron inconsistencias físicas.")
+
+    return df
 
 def validar_patron_estacional(df, latitud, longitud):
 
@@ -778,46 +945,61 @@ if __name__ == "__main__":
 
     # 1. Cargar JSON y extraer coordenadas físicas reales del encabezado
     datos = cargar_json(ARCHIVO_JSON)
+
+    # 2. Coordenadas
     coordenadas = datos["geometry"]["coordinates"]
     longitud, latitud, altitud = coordenadas
 
-    # 2. Convertir a DataFrame
+    # 3. Convertir a DataFrame
     df_solar = convertir_json_a_dataframe(datos)
 
-    # 3. Perfilado y limpieza inicial (-999 -> NaN)
+    # 4. Limpieza inicial (-999 -> NaN)
     df_solar, reporte = perfilar_datos_crudos(df_solar)
 
+    # 5. Verificar continuidad
     verificar_continuidad_temporal(df_solar)
 
-    # 4. Reconstrucción del eje temporal
+    # 6. Reconstrucción del eje temporal
     df_solar = reconstruir_eje_temporal(df_solar)
 
-    # 5. Interpolación y asignación de estados de calidad de datos
-    df_solar = interpolar_datos(df_solar)
-    df_solar = agregar_estado(df_solar)
+    # 7. Validación de límites físicos
+    df_solar = validar_consistencia_fisica(df_solar)
 
-    # 6. Validaciones de Rangos Físicos Básicos
-    errores_fisicos = validar_rangos_fisicos(df_solar)
-    print("\nValidación de límites absolutos:")
-    if errores_fisicos:
-        for error in errores_fisicos:
-            print(f" Alerta: {error}")
-    else:
-        print(" Datos dentro de rangos límites estándar.")
-
-    # =========================================================================
-    # NUEVO -> PASO 5.4: Validación de Coherencia Solar (Ciclo Astronómico)
-    # =========================================================================
+    # 8. Validación astronómica
     df_solar, alertas_astronomicas = validar_coherencia_solar(df_solar, latitud, longitud)
 
-    resumen_estacional = validar_patron_estacional(
-        df_solar,
-        latitud,
-        longitud
-    )
+    # 9. Interpolar únicamente los NaN recuperables
+    df_solar = interpolar_datos(df_solar)
 
-    # 7. Validación de estructura final
+    # 10. Asignar estado final y origen
+    df_solar = agregar_estado(df_solar)
+    df_solar = agregar_origen(df_solar)
+
+    # 11. Validación estacional
+    resumen_estacional = validar_patron_estacional(df_solar, latitud, longitud)
+
+    # 12. Validación final
     validar_resultado(df_solar)
+
+    interpolados = (df_solar["estado"] == "interpolado").sum()
+    reconstruidos = (df_solar["estado"] == "reconstruido").sum()
+    faltantes = (df_solar["estado"] == "faltante").sum()
+
+    print("\nResumen de reconstrucción")
+    print("-" * 60)
+    print(f"Timestamps interpolados : {interpolados}")
+    print(f"Timestamps reconstruidos: {reconstruidos}")
+    print(f"Timestamps pendientes   : {faltantes}")
+
+    if faltantes > 0:
+        print(
+            "\nNota: Los huecos detectados superan el umbral máximo permitido para "
+            "interpolación. Los timestamps afectados permanecen marcados "
+            'como "faltante" para su posterior reconstrucción mediante '
+            "el modelo de Machine Learning."
+        )
+
+    print("-" * 60)
 
     print("\nResumen final del estado de calidad de las celdas (Para Tesis):")
     print(df_solar["estado"].value_counts())
@@ -957,7 +1139,7 @@ if __name__ == "__main__":
             .round(3)
             .to_dict()
         ),
-        
+
         "limitaciones": [
 
         "Se interpolan únicamente huecos de hasta 2 horas mediante interpolación temporal.",
