@@ -1,0 +1,27 @@
+panel:
+  modelo: Kyocera KC200GT
+  fabricante: Kyocera Solar Inc.
+  tecnologia: Policristalino
+  potencia_nominal_wp: 200
+stc:
+  irradiancia_wm2: 1000.0
+  temperatura_c: 25.0
+datasheet:
+  Voc: 32.9
+  Isc: 8.21
+  Vmpp: 26.3
+  Impp: 7.61
+  Ns: 72
+  alpha_Isc: 0.0026
+  beta_Voc: -0.126
+modelo_diodo_unico:
+  Rs: 0.133619
+  Rsh: 1038.4261
+  n: 1.121061
+  tolerancia: 1.0e-06
+  max_iteraciones: 100
+calibracion:
+  calibrado: true
+  fecha: '2026-07-21 20:57:22'
+  error_porcentual_maximo: 0.6404
+  metodo: scipy.optimize.least_squares (Trust Region Reflective)

@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 # python simulacion_fv/datasets_irradiancia/procesar_datos_crudos.py
 
 # Opción 1: Especificar un archivo JSON concreto
@@ -360,6 +361,31 @@ def generar_histogramas(df):
 
         print(f"Guardado: {archivo}")
 
+def generar_curva_irradiancia(df):
+
+    # Si la fecha está en el índice
+    irradiancia_hora = df.groupby(df.index.hour)["ALLSKY_SFC_SW_DWN"].mean()
+
+    plt.figure(figsize=(8,5))
+    plt.plot(
+        irradiancia_hora.index,
+        irradiancia_hora.values,
+        marker='o',
+        linewidth=2
+    )
+
+    plt.title("Curva de irradiancia media por hora")
+    plt.xlabel("Hora del día")
+    plt.ylabel("Irradiancia (W/m²)")
+    plt.xticks(range(0,24))
+    plt.grid(True)
+
+    plt.savefig(
+        RUTA_GRAFICOS / "curva_irradiancia_hora.png",
+        dpi=300
+    )
+    plt.close()
+
 def perfilar_datos_crudos(df):
 
     # 1. Evaluar la calidad global del DataFrame
@@ -435,6 +461,8 @@ def perfilar_datos_crudos(df):
     )
 
     generar_histogramas(df)
+
+    generar_curva_irradiancia(df)
 
     print(f"Porcentaje crítico del sistema: {porcentaje_critico:.4f}%")
 
@@ -749,7 +777,6 @@ def calcular_orto_ocaso(latitud, longitud, timestamps):
     hora_atardecer = mediodia_solar + duracion_media_dia
     
     return hora_amanecer.values, hora_atardecer.values
-
 
 def validar_coherencia_solar(df, latitud, longitud):
     """
