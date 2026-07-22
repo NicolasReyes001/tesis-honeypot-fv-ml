@@ -10,7 +10,7 @@ eléctricos característicos publicados en el datasheet del panel de
 referencia (Kyocera KC200GT — ver
 `docs/05_diseño/parametros_panel_referencia.md`): Voc, Isc, Vmpp e Impp.
 
-Fecha de ejecución: 2026-07-21 18:41:28
+Fecha de ejecución: 2026-07-22 16:38:46
 
 ## 2. Panel de referencia
 

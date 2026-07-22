@@ -14,51 +14,51 @@ El sistema se despliega íntegramente sobre una Raspberry Pi 4 mediante contened
 
 ### Infraestructura física y de contenedores
 
-| Componente | Función |
-|---|---|
+| Componente                | Función                                                  |
+| ------------------------- | -------------------------------------------------------- |
 | Raspberry Pi 4 (4 GB RAM) | Plataforma de despliegue del honeypot y la simulación FV |
-| Docker + Docker Compose | Aislamiento y gestión de servicios mediante contenedores |
+| Docker + Docker Compose   | Aislamiento y gestión de servicios mediante contenedores |
 
 ### Simulación fotovoltaica
 
-| Componente | Función |
-|---|---|
-| Modelo de un diodo | Cálculo del comportamiento eléctrico del generador FV |
-| Relaciones simplificadas del inversor | Estimación de potencia AC, eficiencia y estado operativo |
-| API NASA POWER | Fuente de datos históricos de irradiancia solar de la región |
-| Script Python | Publicación periódica de telemetría vía MQTT y Modbus TCP |
+| Componente                            | Función                                                      |
+| ------------------------------------- | ------------------------------------------------------------ |
+| Modelo de un diodo                    | Cálculo del comportamiento eléctrico del generador FV        |
+| Relaciones simplificadas del inversor | Estimación de potencia AC, eficiencia y estado operativo     |
+| API NASA POWER                        | Fuente de datos históricos de irradiancia solar de la región |
+| Script Python                         | Publicación periódica de telemetría vía MQTT y Modbus TCP    |
 
 ### Servicios señuelo
 
-| Servicio | Puerto | Herramienta |
-|---|---|---|
-| SSH | 22 | Cowrie |
-| HTTP | 80 | Servidor web ligero (honeypot) |
-| Modbus TCP | 502 | Servidor PyModbus señuelo |
-| MQTT | 1883 | Broker Mosquitto |
+| Servicio   | Puerto | Herramienta                    |
+| ---------- | ------ | ------------------------------ |
+| SSH        | 22     | Cowrie                         |
+| HTTP       | 80     | Servidor web ligero (honeypot) |
+| Modbus TCP | 502    | Servidor PyModbus señuelo      |
+| MQTT       | 1883   | Broker Mosquitto               |
 
 ### Captura y procesamiento
 
-| Componente | Función |
-|---|---|
-| Cowrie | Captura de sesiones SSH: credenciales, comandos, duración |
-| tcpdump | Captura de tráfico general en formato PCAP |
+| Componente    | Función                                                               |
+| ------------- | --------------------------------------------------------------------- |
+| Cowrie        | Captura de sesiones SSH: credenciales, comandos, duración             |
+| tcpdump       | Captura de tráfico general en formato PCAP                            |
 | Parser Python | Conversión de PCAP a eventos estructurados con extracción de features |
 
 ### Persistencia
 
-| Componente | Función |
-|---|---|
-| SQLite | Almacenamiento durante la fase de prototipo en Raspberry Pi |
-| PostgreSQL | Migración futura para mayor volumen y concurrencia |
+| Componente | Función                                                     |
+| ---------- | ----------------------------------------------------------- |
+| SQLite     | Almacenamiento durante la fase de prototipo en Raspberry Pi |
+| PostgreSQL | Migración futura para mayor volumen y concurrencia          |
 
 ### Machine Learning y visualización
 
-| Componente | Función |
-|---|---|
+| Componente                   | Función                                                 |
+| ---------------------------- | ------------------------------------------------------- |
 | scikit-learn (Random Forest) | Entrenamiento y evaluación del clasificador supervisado |
-| Streamlit | Dashboard de alertas y telemetría (fase inicial) |
-| Grafana | Integración futura para visualización avanzada |
+| Streamlit                    | Dashboard de alertas y telemetría (fase inicial)        |
+| Grafana                      | Integración futura para visualización avanzada          |
 
 ## 4. Flujo de información
 
@@ -165,15 +165,15 @@ El dataset se construye a partir de los registros de la base de datos mediante l
 
 Las siete clases del dataset son las siguientes:
 
-| Clase | Etiqueta | Descripción |
-|---|---|---|
-| 0 | Normal | Tráfico legítimo sin indicios de actividad maliciosa |
-| 1 | Escaneo | Exploración de puertos o descubrimiento de servicios |
-| 2 | Fuerza bruta / Intrusión SSH | Intentos repetidos de autenticación SSH y sesiones con acceso exitoso seguido de actividad maliciosa |
-| 3 | Manipulación Modbus/MQTT | Acceso no autorizado a registros Modbus o tópicos MQTT |
-| 4 | DoS/DDoS | Inundación de conexiones para saturar un servicio |
-| 5 | Replay Attack | Reenvío diferido de tramas legítimas para acciones no autorizadas |
-| 6 | FDIA | Modificación maliciosa de variables físicas en Modbus o MQTT |
+| Clase | Etiqueta                     | Descripción                                                                                          |
+| ----- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 0     | Normal                       | Tráfico legítimo sin indicios de actividad maliciosa                                                 |
+| 1     | Escaneo                      | Exploración de puertos o descubrimiento de servicios                                                 |
+| 2     | Fuerza bruta / Intrusión SSH | Intentos repetidos de autenticación SSH y sesiones con acceso exitoso seguido de actividad maliciosa |
+| 3     | Manipulación Modbus/MQTT     | Acceso no autorizado a registros Modbus o tópicos MQTT                                               |
+| 4     | DoS/DDoS                     | Inundación de conexiones para saturar un servicio                                                    |
+| 5     | Replay Attack                | Reenvío diferido de tramas legítimas para acciones no autorizadas                                    |
+| 6     | FDIA                         | Modificación maliciosa de variables físicas en Modbus o MQTT                                         |
 
 Para las clases 5 y 6, cuya generación experimental controlada puede resultar compleja, se contempla la complementación con muestras de datasets públicos de referencia.
 
@@ -203,3 +203,22 @@ Se contempla la integración futura con Grafana para ampliar las capacidades de 
 ## 9. Diagrama arquitectónico
 
 El diagrama oficial del sistema se encuentra en el archivo `arquitectura.png` adjunto a este documento. Representa el flujo completo de información entre los ocho componentes del sistema, desde la fuente de datos externa hasta el dashboard, identificando visualmente las capas funcionales, los puntos de captura y las rutas de datos principales.
+
+## 10. Subsimulación fotovoltaica
+
+Esta sección documenta, de forma consolidada, los supuestos y parámetros de la subsimulación fotovoltaica que alimenta al honeypot (carpeta `simulacion_fv/`). El documento maestro con el detalle completo está en
+`docs/05_diseño/diseno_simulacion_fotovoltaica.md`; aquí se resume lo esencial.
+
+**Panel de referencia**: Kyocera KC200GT (200 Wp, policristalino), datos tomados del datasheet oficial del fabricante (`referencias/bibliografia.bib` → `kyocera2010kc200gt`).
+
+**Fuente de datos ambientales**: irradiancia global horizontal (`ALLSKY_SFC_SW_DWN`) y temperatura a 2m (`T2M`) de la API NASA POWER, para Bogotá, con variabilidad de nubosidad sintética (cadena de Markov de 4 estados + ruido gaussiano) superpuesta sobre la serie limpia.
+
+**Resolución temporal**: 5 minutos (remuestreo por interpolación desde la resolución horaria nativa de NASA POWER).
+
+**Método numérico**: modelo de diodo único de 5 parámetros (Iph, I0, Rs, Rsh, n), resuelto punto a punto mediante el método de Brent (`scipy.optimize.brentq`) sobre el rango físicamente válido de corriente.
+
+**Resultado de la validación (Paso 9)**: el modelo calibrado reproduce Voc, Isc, Vmpp e Impp del datasheet con un error máximo de 0.64% en condiciones estándar de prueba (STC: 1000 W/m², 25°C).
+
+**Algoritmo de seguimiento del punto de máxima potencia**: Perturbar y Observar (P&O), implementado como función de estado pura, que simula el comportamiento de un inversor real (sin conocimiento de la curva I-V completa).
+
+**Limitaciones conocidas**: calibración realizada únicamente en el punto STC (sin curvas I-V experimentales a otras condiciones); el algoritmo P&O se ejecuta a la misma resolución temporal del dataset ambiental (5 min), más lento que el ciclo de control de un inversor real; el dataset ambiental actual cubre un único día representativo, pendiente de escalar a un periodo más largo. Ver la sección de limitaciones de `diseno_simulacion_fotovoltaica.md` para el detalle completo.

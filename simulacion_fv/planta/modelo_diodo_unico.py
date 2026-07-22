@@ -82,6 +82,42 @@ class ParametrosModulo:
     tolerancia: float = 1e-6    # A - Tolerancia de convergencia
     max_iteraciones: int = 100  # - Máximo de iteraciones
 
+    def __post_init__(self):
+        """
+        Validación de rango físico (Paso 16, Fase 5): construir
+        ParametrosModulo con valores físicamente imposibles debe fallar
+        de forma controlada y explícita (ValueError con mensaje claro),
+        en vez de propagarse como un error numérico confuso más adelante
+        dentro del solver (división por cero, log de número negativo, etc.).
+        """
+        errores = []
+        if self.Voc <= 0.0:
+            errores.append(f"Voc debe ser > 0 (recibido: {self.Voc})")
+        if self.Isc <= 0.0:
+            errores.append(f"Isc debe ser > 0 (recibido: {self.Isc})")
+        if not (0.0 < self.Vmpp < self.Voc):
+            errores.append(f"Vmpp debe estar en (0, Voc={self.Voc}) (recibido: {self.Vmpp})")
+        if not (0.0 < self.Impp < self.Isc):
+            errores.append(f"Impp debe estar en (0, Isc={self.Isc}) (recibido: {self.Impp})")
+        if self.Ns <= 0:
+            errores.append(f"Ns debe ser un entero > 0 (recibido: {self.Ns})")
+        if self.Rs < 0.0:
+            errores.append(f"Rs debe ser >= 0 (recibido: {self.Rs})")
+        if self.Rsh <= 0.0:
+            errores.append(f"Rsh debe ser > 0 (división por cero en el modelo si Rsh=0; recibido: {self.Rsh})")
+        if self.n <= 0.0:
+            errores.append(f"n (factor de idealidad) debe ser > 0 (recibido: {self.n})")
+        if self.tolerancia <= 0.0:
+            errores.append(f"tolerancia debe ser > 0 (recibido: {self.tolerancia})")
+        if self.max_iteraciones <= 0:
+            errores.append(f"max_iteraciones debe ser > 0 (recibido: {self.max_iteraciones})")
+
+        if errores:
+            raise ValueError(
+                "ParametrosModulo recibió valores físicamente inválidos:\n  - "
+                + "\n  - ".join(errores)
+            )
+
 
 # =====================================================================
 # CARGA / GUARDADO DE PARÁMETROS DESDE YAML (Paso 9)
